@@ -226,7 +226,7 @@ def report_to_text(report: Dict) -> str:
             lines.append(f"  [{c.get('time_start','?')}–{c.get('time_end','?')}] Stage-{c.get('stage','?')} ({c.get('score',0):.2f})  {c.get('caption','')}")
         lines.append("")
 
-    lines += ["=" * 70, "  END OF REPORT — Vigilant AI · HackIllinois 2026", "=" * 70]
+    lines += ["=" * 70, "  END OF REPORT — Vigilant AI Sentinel Stream", "=" * 70]
     return "\n".join(lines)
 
 
@@ -256,7 +256,7 @@ def report_to_pdf(report: Dict) -> bytes:
         0, 6,
         f"Report ID: {report.get('report_id','N/A')}   |   "
         f"Generated: {report.get('generated_at','')[:19].replace('T',' ')}   |   "
-        f"Vigilant AI · HackIllinois 2026",
+        f"Vigilant AI · Security Intelligence",
         fill=True, align="C", new_x="LMARGIN", new_y="NEXT",
     )
     pdf.ln(3)
@@ -347,7 +347,7 @@ def report_to_pdf(report: Dict) -> bytes:
     pdf.ln(4)
     pdf.set_font("Helvetica", "I", 7.5)
     pdf.set_text_color(160, 160, 160)
-    pdf.cell(0, 5, "End of Report - Vigilant AI / HackIllinois 2026", align="C", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 5, "End of Report - Vigilant AI Sentinel Stream", align="C", new_x="LMARGIN", new_y="NEXT")
 
     return bytes(pdf.output())
 

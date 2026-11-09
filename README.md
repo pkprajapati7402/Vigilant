@@ -1,6 +1,6 @@
 # Vigilant AI — Sentinel Stream
 
-> **AI-powered video surveillance intelligence built at HackIllinois 2026**
+> **AI-powered video surveillance intelligence and semantic search platform**
 
 [![Modal](https://img.shields.io/badge/GPU-Modal_A100-7C3AED?style=flat-square&logo=lightning&logoColor=white)](https://modal.com)
 [![Gemini](https://img.shields.io/badge/AI-Gemini_2.5_Flash-4285F4?style=flat-square&logo=google&logoColor=white)](https://deepmind.google/gemini)
@@ -27,7 +27,7 @@ No manual review. No timeline scrubbing. Just answers.
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
 - [API Reference](#api-reference)
-- [Sponsor Tracks](#sponsor-tracks)
+- [Architecture & Integrations](#architecture--integrations)
 
 ---
 
@@ -127,7 +127,7 @@ User uploads video
 | **Cross-Video Memory** | Supermemory | Persistent long-term memory API. After each video, behavioral intelligence is stored. Users can query across all historical footage in natural language. |
 | **Backend** | FastAPI (Python) | Async web framework with first-class Server-Sent Events support — critical for our two-phase streaming chat (clips first, then narrative). |
 | **Structured Storage** | SQLite | Zero-config relational database for events, alerts, video metadata, and chat history. No setup, ships with Python. |
-| **Frontend** | React 19 + TypeScript | Component model and strict types keep the codebase maintainable under hackathon time pressure. |
+| **Frontend** | React 19 + TypeScript | Component model and strict types keep the codebase modular, maintainable, and robust. |
 | **Styling** | Tailwind CSS v4 | Utility-first, zero custom CSS. The `@theme {}` block in `index.css` handles all custom animations without a config file. |
 
 ---
@@ -205,7 +205,7 @@ Stage C alerts trigger a pulsing red badge in the UI header and a red ambient gl
 ## Project Structure
 
 ```
-HackIllinois/
+vigilant/
 ├── backend/                    Python + FastAPI
 │   ├── api/
 │   │   └── main.py             REST + SSE endpoints
@@ -319,9 +319,9 @@ npm run dev
 
 ---
 
-## Sponsor Tracks
+## Architecture & Integrations
 
-### Modal — AI Inference Track
+### Modal — Scalable AI Inference
 
 We run **three heavy neural networks simultaneously on a single A100**:
 
@@ -331,9 +331,9 @@ We run **three heavy neural networks simultaneously on a single A100**:
 
 Total GPU footprint: ~19 GB of 40 GB VRAM. All models are pre-warmed and re-used across clips within a container using Modal's container lifecycle hooks. Videos are processed in parallel across multiple containers using Modal's `.map()` API. A100 GPU time is billed per-second with zero idle cost.
 
-**Why Modal?** Provisioning an A100 server for a hackathon would be impractical. Modal gave us enterprise-grade GPU compute on demand, paid only for the seconds we used, with automatic container scaling.
+**Why Modal?** Modal provides on-demand, enterprise-grade A100 GPU compute billed per-second, with zero idle overhead and seamless container auto-scaling.
 
-### Actian VectorAI — Vector Database Track
+### Actian VectorAI — Vector Database
 
 Every processed video clip is stored as a **768-dimensional CLIP embedding** in Actian VectorAI using cosine similarity distance. When a user searches ("show me fights"), we:
 
@@ -344,7 +344,7 @@ Every processed video clip is stored as a **768-dimensional CLIP embedding** in 
 
 VectorAI's purpose-built architecture delivers sub-100ms similarity search at this dimensionality with no extra configuration.
 
-### Supermemory — Memory Track
+### Supermemory — Cross-Video Intelligence Memory
 
 After every video is processed, we store a structured intelligence document to Supermemory:
 
@@ -386,11 +386,9 @@ Users see video clips appear within ~200ms while the full AI response is still b
 
 ---
 
-## Built at HackIllinois 2026
+## About Vigilant AI
 
-Vigilant AI was built in a weekend at HackIllinois 2026, University of Illinois Urbana-Champaign.
-
-The goal was to demonstrate that modern open-weight vision models, serverless GPU infrastructure, and purpose-built vector databases can together solve a real-world safety problem — with a production-quality developer experience — in under 48 hours.
+Vigilant AI demonstrates how modern open-weight vision models, serverless GPU infrastructure, and purpose-built vector databases can work together to solve real-world video surveillance and security intelligence challenges with a production-ready developer experience.
 
 ---
 

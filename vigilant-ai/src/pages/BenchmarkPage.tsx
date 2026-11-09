@@ -410,7 +410,7 @@ export default function BenchmarkPage() {
                 </div>
 
                 <p className="text-center text-[11px] text-gray-400 pb-6">
-                    Vigilant AI · HackIllinois 2026 · Benchmarks reflect real workloads, not synthetic tests
+                    Vigilant AI · Benchmarks reflect real workloads, not synthetic tests
                 </p>
             </main>
         </div>

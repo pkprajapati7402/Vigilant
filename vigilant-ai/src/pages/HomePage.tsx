@@ -126,7 +126,7 @@ export default function HomePage() {
             )}
 
             <footer className="relative z-10 border-t border-gray-100 mt-12 py-6 text-center text-[11px] text-gray-400">
-                Vigilant AI · HackIllinois 2026 · AI-Powered Video Intelligence
+                Vigilant AI · AI-Powered Video Intelligence
             </footer>
         </div>
     )

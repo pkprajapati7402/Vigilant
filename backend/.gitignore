@@ -35,7 +35,7 @@ vectordb_data/
 # Dev / debug artifacts
 output*.txt
 temp_events*.json
-santosh_events.json
+sample_events*.json
 *_utf8.txt
 
 # Environment variables (contains secrets — never commit)
