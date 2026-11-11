@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-    Eye, Upload, Video, Shield, Activity, Loader2,
-    ChevronRight, Plus, X, CheckCircle2, AlertCircle, Zap, BarChart3,
-    Brain, Send, Sparkles, Globe, Search, Radio, Film
+    Shield, Upload, Video, Activity, Loader2,
+    ChevronRight, Plus, X, CheckCircle2, AlertCircle, BarChart3,
+    Brain, Send, Search, RotateCcw, Bell,
+    Folder, Cpu, Settings, FileText, ArrowDownToLine
 } from 'lucide-react'
 import { api, type VideoInfo, type MemoryQueryResult } from '../api'
 
@@ -11,6 +12,7 @@ export default function HomePage() {
     const [videos, setVideos] = useState<VideoInfo[]>([])
     const [loading, setLoading] = useState(true)
     const [showUpload, setShowUpload] = useState(false)
+    const [activeNav, setActiveNav] = useState('dashboard')
     const navigate = useNavigate()
 
     const loadVideos = useCallback(() => {
@@ -27,49 +29,41 @@ export default function HomePage() {
     const totalTime   = videos.reduce((s, v) => s + (v.processing_time_s || 0), 0)
 
     return (
-        <div className="min-h-screen bg-[#080c14] text-slate-100 relative overflow-x-hidden selection:bg-amber-500/30 selection:text-amber-200">
-            {/* Ambient Tactical Atmosphere */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden bg-tactical-grid opacity-35" />
-            <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute -top-32 left-1/3 w-[650px] h-[450px] bg-gradient-to-br from-amber-500/10 via-orange-600/5 to-transparent rounded-full blur-3xl" />
-                <div className="absolute top-1/4 right-10 w-[500px] h-[500px] bg-gradient-to-br from-indigo-600/10 via-violet-600/5 to-transparent rounded-full blur-3xl" />
-                <div className="absolute bottom-10 left-10 w-[450px] h-[350px] bg-emerald-500/5 rounded-full blur-3xl" />
-            </div>
-
-            {/* Header */}
-            <header className="sticky top-0 z-30 bg-[#080c14]/85 backdrop-blur-2xl border-b border-white/[0.08] shadow-2xl shadow-black/40">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
-                    <div className="flex items-center gap-3.5">
-                        <div className="relative w-10 h-10 group">
-                            <div className="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl blur-md opacity-60 group-hover:opacity-90 transition-opacity" />
-                            <div className="relative w-10 h-10 bg-gradient-to-br from-[#121826] to-[#1c2438] border border-amber-500/40 rounded-xl flex items-center justify-center shadow-inner">
-                                <Eye className="w-5 h-5 text-amber-400" />
-                            </div>
+        <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
+            {/* Top Navigation Bar */}
+            <header className="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-xs">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+                    {/* Brand */}
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl border border-blue-200/90 bg-white flex items-center justify-center shadow-xs">
+                            <svg className="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                <ellipse cx="12" cy="11.5" rx="3.5" ry="2" />
+                                <circle cx="12" cy="11.5" r="1" fill="currentColor" />
+                            </svg>
                         </div>
                         <div>
-                            <div className="flex items-center gap-2">
-                                <h1 className="text-base sm:text-lg font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent">
-                                    Vigilant <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">AI</span>
-                                </h1>
-                                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium tracking-wide bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                    OPERATIONAL
-                                </span>
-                            </div>
-                            <p className="text-[10px] text-zinc-400 font-mono uppercase tracking-widest">Sentinel Stream · Computer Vision</p>
+                            <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight">
+                                Vigilant AI
+                            </h1>
+                            <p className="text-xs text-slate-400 font-normal">
+                                Sentinel Stream  ·  Computer Vision
+                            </p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2.5">
+
+                    {/* Header Actions */}
+                    <div className="flex items-center gap-3">
                         <button
                             onClick={() => navigate('/benchmarks')}
-                            className="cursor-pointer group flex items-center gap-1.5 px-3.5 py-2 text-zinc-300 hover:text-white bg-zinc-900/60 hover:bg-zinc-800/80 border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold transition-all hover:shadow-lg hover:shadow-black/40 active:scale-95"
+                            className="cursor-pointer flex items-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl shadow-xs transition-all hover:border-slate-300"
                         >
-                            <BarChart3 className="w-3.5 h-3.5 text-zinc-400 group-hover:text-amber-400 transition-colors" />
+                            <BarChart3 className="w-3.5 h-3.5 text-slate-500" />
                             <span>Benchmarks</span>
                         </button>
                         <button
                             onClick={() => setShowUpload(true)}
-                            className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-500 rounded-xl text-xs sm:text-sm font-semibold text-white transition-all shadow-lg shadow-amber-500/25 ring-1 ring-white/20 hover:ring-white/30 active:scale-95"
+                            className="cursor-pointer flex items-center gap-1.5 px-4 py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all active:scale-95"
                         >
                             <Plus className="w-4 h-4 stroke-[2.5]" />
                             <span>Upload Video</span>
@@ -78,89 +72,196 @@ export default function HomePage() {
                 </div>
             </header>
 
-            <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 relative z-10 space-y-7">
-                {/* Cross-Video Intelligence */}
-                <GlobalMemoryChat />
-
-                {/* Telemetry Stats Bento Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-                    <StatCard
-                        icon={Film}
-                        label="Videos Ingested"
-                        value={videos.length}
-                        accent="amber"
-                        sub="Analyzed streams"
-                    />
-                    <StatCard
-                        icon={Activity}
-                        label="Total Events"
-                        value={totalEvents}
-                        accent="emerald"
-                        sub="CV tracklets classified"
-                    />
-                    <StatCard
-                        icon={Shield}
-                        label="Total Alerts"
-                        value={totalAlerts}
-                        accent="red"
-                        pulse={totalAlerts > 0}
-                        sub="Threat windows flagged"
-                    />
-                    <StatCard
-                        icon={Zap}
-                        label="Compute Time"
-                        value={`${totalTime.toFixed(0)}s`}
-                        accent="violet"
-                        sub="GPU inference active"
-                    />
-                </div>
-
-                {/* Video list */}
-                <div className="space-y-3.5">
-                    <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-2">
-                            <Radio className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-                            <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-widest">Surveillance Feeds & Archives</h2>
-                        </div>
-                        {videos.length > 0 && (
-                            <span className="text-xs font-mono text-zinc-400 bg-zinc-900/80 px-2.5 py-0.5 rounded-full border border-white/10">
-                                {videos.length} video{videos.length !== 1 ? 's' : ''} loaded
-                            </span>
-                        )}
-                    </div>
-
-                    {loading ? (
-                        <div className="glass-panel rounded-2xl flex items-center justify-center py-24 border border-white/10">
-                            <div className="flex flex-col items-center gap-3">
-                                <Loader2 className="w-7 h-7 animate-spin text-amber-400" />
-                                <p className="text-xs text-zinc-400 font-mono tracking-wide">Querying database...</p>
-                            </div>
-                        </div>
-                    ) : videos.length === 0 ? (
-                        <div className="text-center py-24 border border-dashed border-white/15 rounded-2xl glass-panel relative overflow-hidden">
-                            <div className="w-16 h-16 mx-auto mb-4 bg-zinc-900/90 rounded-2xl flex items-center justify-center border border-white/10 shadow-inner">
-                                <Video className="w-7 h-7 text-zinc-500" />
-                            </div>
-                            <h3 className="text-zinc-200 text-base font-semibold mb-1">No surveillance footage ingested</h3>
-                            <p className="text-zinc-400 text-xs max-w-sm mx-auto mb-6 leading-relaxed">
-                                Upload CCTV, drone, or security camera footage to trigger YOLO11 motion tracking, Gemini multimodal forensic analysis, and RAG search.
-                            </p>
+            {/* Layout Body: Sidebar + Main Area */}
+            <div className="flex-1 max-w-7xl w-full mx-auto flex">
+                {/* Left Sidebar */}
+                <aside className="w-60 shrink-0 hidden md:flex flex-col justify-between py-6 px-4 border-r border-slate-200/80 bg-[#F8FAFC]">
+                    <div className="space-y-6">
+                        {/* Active Item */}
+                        <div>
                             <button
-                                onClick={() => setShowUpload(true)}
-                                className="cursor-pointer px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 rounded-xl text-xs sm:text-sm font-semibold text-white transition-all shadow-lg shadow-amber-500/25 ring-1 ring-white/20 active:scale-95"
+                                onClick={() => setActiveNav('dashboard')}
+                                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-blue-50 text-blue-600 font-semibold text-xs sm:text-sm text-left transition-all"
                             >
-                                Upload first video
+                                <ArrowDownToLine className="w-4 h-4 text-blue-600" />
+                                <span>Dashboard</span>
                             </button>
                         </div>
-                    ) : (
-                        <div className="grid gap-3">
-                            {videos.map((v, i) => (
-                                <VideoCard key={v.id} video={v} index={i} onClick={() => navigate(`/video/${v.id}`)} />
-                            ))}
+
+                        {/* ANALYTICS Section */}
+                        <div>
+                            <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase px-3 mb-1.5">
+                                ANALYTICS
+                            </p>
+                            <nav className="space-y-0.5">
+                                <SidebarItem
+                                    icon={Search}
+                                    label="Cross-Video Intelligence"
+                                    active={activeNav === 'intelligence'}
+                                    onClick={() => {
+                                        setActiveNav('intelligence')
+                                        document.getElementById('intelligence-box')?.scrollIntoView({ behavior: 'smooth' })
+                                    }}
+                                />
+                                <SidebarItem
+                                    icon={Bell}
+                                    label="Alerts"
+                                    active={activeNav === 'alerts'}
+                                    onClick={() => {
+                                        setActiveNav('alerts')
+                                        document.getElementById('feeds-section')?.scrollIntoView({ behavior: 'smooth' })
+                                    }}
+                                />
+                                <SidebarItem
+                                    icon={Activity}
+                                    label="Events"
+                                    active={activeNav === 'events'}
+                                    onClick={() => {
+                                        setActiveNav('events')
+                                        document.getElementById('feeds-section')?.scrollIntoView({ behavior: 'smooth' })
+                                    }}
+                                />
+                                <SidebarItem
+                                    icon={Folder}
+                                    label="Feeds & Archives"
+                                    active={activeNav === 'feeds'}
+                                    onClick={() => {
+                                        setActiveNav('feeds')
+                                        document.getElementById('feeds-section')?.scrollIntoView({ behavior: 'smooth' })
+                                    }}
+                                />
+                            </nav>
                         </div>
-                    )}
-                </div>
-            </main>
+
+                        {/* SYSTEM Section */}
+                        <div>
+                            <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase px-3 mb-1.5">
+                                SYSTEM
+                            </p>
+                            <nav className="space-y-0.5">
+                                <SidebarItem
+                                    icon={Cpu}
+                                    label="Compute & Status"
+                                    active={activeNav === 'compute'}
+                                    onClick={() => navigate('/benchmarks')}
+                                />
+                                <SidebarItem
+                                    icon={Settings}
+                                    label="Settings"
+                                    active={activeNav === 'settings'}
+                                    onClick={() => setActiveNav('settings')}
+                                />
+                                <SidebarItem
+                                    icon={FileText}
+                                    label="Activity Log"
+                                    active={activeNav === 'logs'}
+                                    onClick={() => setActiveNav('logs')}
+                                />
+                            </nav>
+                        </div>
+                    </div>
+
+                    {/* System Status bottom widget */}
+                    <div className="bg-white rounded-xl p-3.5 border border-slate-200/80 shadow-xs space-y-1">
+                        <p className="text-xs font-semibold text-slate-700">System Status</p>
+                        <p className="flex items-center gap-1.5 text-xs font-medium text-emerald-600">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            Operational
+                        </p>
+                        <p className="text-[11px] text-slate-400">All systems running smoothly</p>
+                    </div>
+                </aside>
+
+                {/* Main Content Area */}
+                <main className="flex-1 py-6 px-4 sm:px-6 lg:px-8 space-y-6 overflow-y-auto">
+                    {/* Card 1: Cross-Video Intelligence */}
+                    <div id="intelligence-box">
+                        <GlobalMemoryChat />
+                    </div>
+
+                    {/* Card 2: 4 Telemetry Metric Cards */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <StatCard
+                            icon={Video}
+                            label="Videos Ingested"
+                            value={videos.length}
+                            sub="Analyzed streams"
+                            color="blue"
+                        />
+                        <StatCard
+                            icon={Activity}
+                            label="Total Events"
+                            value={totalEvents}
+                            sub="CV tracklets classified"
+                            color="emerald"
+                        />
+                        <StatCard
+                            icon={Shield}
+                            label="Total Alerts"
+                            value={totalAlerts}
+                            sub="Threat windows flagged"
+                            color="orange"
+                        />
+                        <StatCard
+                            icon={Cpu}
+                            label="Compute Time"
+                            value={`${totalTime.toFixed(0)}s`}
+                            sub="GPU inference active"
+                            color="purple"
+                        />
+                    </div>
+
+                    {/* Card 3: Surveillance Feeds & Archives */}
+                    <div id="feeds-section" className="space-y-3">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <Search className="w-4 h-4 text-blue-600" />
+                                <h2 className="text-sm font-bold text-slate-900">Surveillance Feeds & Archives</h2>
+                            </div>
+                            {videos.length > 0 && (
+                                <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+                                    {videos.length} video{videos.length !== 1 ? 's' : ''}
+                                </span>
+                            )}
+                        </div>
+
+                        {loading ? (
+                            <div className="bg-white rounded-2xl p-16 border border-slate-200/80 shadow-xs flex flex-col items-center justify-center gap-3">
+                                <Loader2 className="w-7 h-7 animate-spin text-blue-600" />
+                                <p className="text-xs text-slate-400">Loading footage records...</p>
+                            </div>
+                        ) : videos.length === 0 ? (
+                            /* Empty State Matching Reference Image */
+                            <div className="bg-white rounded-2xl p-12 sm:p-16 border border-slate-200/80 shadow-xs text-center">
+                                <div className="w-16 h-16 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4">
+                                    <Video className="w-7 h-7 text-blue-600 stroke-[1.8]" />
+                                </div>
+                                <h3 className="text-base font-bold text-slate-900 mb-1.5">
+                                    No surveillance footage ingested
+                                </h3>
+                                <p className="text-xs text-slate-500 max-w-md mx-auto mb-6 leading-relaxed">
+                                    Upload CCTV, drone, or security camera footage to trigger <span className="text-blue-600 font-semibold">YOLOv8</span> motion tracking, <span className="text-slate-700 font-medium">Gemini multimodal forensic analysis</span>, and RAG search.
+                                </p>
+                                <button
+                                    onClick={() => setShowUpload(true)}
+                                    className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-5 py-2.5 rounded-xl shadow-xs active:scale-95 transition-all"
+                                >
+                                    Upload your first video
+                                </button>
+                                <p className="text-xs text-slate-400 mt-4">
+                                    Supports MP4, MOV · Max file size 5GB
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="grid gap-3">
+                                {videos.map((v, i) => (
+                                    <VideoCard key={v.id} video={v} index={i} onClick={() => navigate(`/video/${v.id}`)} />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </main>
+            </div>
 
             {showUpload && (
                 <UploadModal
@@ -168,11 +269,30 @@ export default function HomePage() {
                     onDone={() => { setShowUpload(false); loadVideos() }}
                 />
             )}
-
-            <footer className="relative z-10 border-t border-white/[0.06] mt-16 py-6 text-center text-[11px] text-zinc-500 font-mono tracking-wider">
-                VIGILANT AI · ENTERPRISE VIDEO INTELLIGENCE & FORENSICS
-            </footer>
         </div>
+    )
+}
+
+// ─── SidebarItem ──────────────────────────────────────────────────────────────
+
+function SidebarItem({ icon: Icon, label, active, onClick }: {
+    icon: React.ComponentType<{ className?: string }>
+    label: string
+    active?: boolean
+    onClick?: () => void
+}) {
+    return (
+        <button
+            onClick={onClick}
+            className={`cursor-pointer w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all text-left ${
+                active
+                    ? 'bg-blue-50 text-blue-600 font-semibold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+            }`}
+        >
+            <Icon className={`w-4 h-4 ${active ? 'text-blue-600' : 'text-slate-400'}`} />
+            <span>{label}</span>
+        </button>
     )
 }
 
@@ -186,10 +306,10 @@ function GlobalMemoryChat() {
     const inputRef = useRef<HTMLInputElement>(null)
 
     const SUGGESTIONS = [
-        'Any high-risk incidents detected?',
-        'Were there any fights or assaults?',
-        'Show me all shoplifting events',
-        'Any trespassing or unauthorized access?',
+        'High-risk incidents?',
+        'Fights or assaults?',
+        'Shoplifting events?',
+        'Trespassing or unauthorized access?',
     ]
 
     const ask = async (q: string) => {
@@ -206,93 +326,84 @@ function GlobalMemoryChat() {
     }
 
     return (
-        <div className="glass-panel rounded-2xl p-5 sm:p-6 shadow-2xl relative overflow-hidden border border-white/[0.09] glow-indigo">
-            {/* Top ambient glow */}
-            <div className="absolute top-0 right-1/4 w-72 h-32 bg-violet-500/10 blur-3xl pointer-events-none" />
-
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs space-y-4">
             {/* Header */}
-            <div className="flex items-center gap-3 mb-4 relative z-10">
-                <div className="relative w-9 h-9 shrink-0">
-                    <div className="absolute inset-0 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-xl blur-sm opacity-50" />
-                    <div className="relative w-9 h-9 bg-gradient-to-br from-violet-600/80 to-indigo-700/80 border border-violet-400/40 rounded-xl flex items-center justify-center shadow-inner">
-                        <Brain className="w-4 h-4 text-white" />
-                    </div>
+            <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl border border-blue-200/90 bg-white flex items-center justify-center text-blue-600 shrink-0 shadow-xs">
+                    <svg className="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="8" strokeDasharray="3 3" />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
                 </div>
                 <div>
-                    <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                        <span>Cross-Video Intelligence</span>
-                        <span className="inline-flex items-center gap-1 text-[9px] px-2 py-0.5 bg-violet-500/15 text-violet-300 border border-violet-500/30 rounded-full font-mono font-semibold tracking-wider uppercase">
-                            <Sparkles className="w-2.5 h-2.5 text-violet-400" /> Supermemory
-                        </span>
+                    <h2 className="text-base font-bold text-slate-900">
+                        Cross-Video Intelligence
                     </h2>
-                    <p className="text-[11px] text-zinc-400 mt-0.5">
-                        Correlate patterns, incidents, and suspicious individuals across <em>all</em> surveillance cameras and archives
+                    <p className="text-xs text-slate-500 mt-0.5">
+                        Correlate patterns, incidents, and suspicious individuals across all surveillance cameras and archives.
                     </p>
                 </div>
             </div>
 
-            {/* Search Input Box */}
-            <div className="bg-zinc-950/70 border border-white/10 rounded-xl shadow-inner focus-within:border-violet-500/50 focus-within:ring-2 focus-within:ring-violet-500/20 transition-all relative z-10">
-                <div className="flex items-center gap-3 px-4 py-3">
-                    <Globe className="w-4 h-4 text-zinc-500 shrink-0" />
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        value={query}
-                        onChange={e => setQuery(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && ask(query)}
-                        placeholder="Ask anything across all camera feeds, e.g. 'Were there any prowlers or thefts?'"
-                        className="flex-1 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 outline-none bg-transparent"
-                    />
-                    <button
-                        onClick={() => ask(query)}
-                        disabled={loading || !query.trim()}
-                        className="cursor-pointer shrink-0 p-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:from-zinc-800 disabled:to-zinc-800 disabled:text-zinc-600 text-white rounded-lg transition-all active:scale-95 disabled:cursor-not-allowed shadow-md"
-                        title="Search"
-                    >
-                        {loading ? <Loader2 className="w-4 h-4 text-white animate-spin" /> : <Send className="w-4 h-4 text-white" />}
-                    </button>
-                </div>
+            {/* Search Input Bar */}
+            <div className="border border-slate-200 rounded-xl px-4 py-2.5 flex items-center gap-3 bg-white shadow-xs focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+                <Search className="w-4 h-4 text-slate-400 shrink-0" />
+                <input
+                    ref={inputRef}
+                    type="text"
+                    value={query}
+                    onChange={e => setQuery(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && ask(query)}
+                    placeholder='Ask anything across all camera feeds, e.g. "Were there any prowlers or thefts?"'
+                    className="flex-1 text-sm text-slate-800 placeholder-slate-400 outline-none bg-transparent"
+                />
+                <button
+                    onClick={() => ask(query)}
+                    disabled={loading || !query.trim()}
+                    className="cursor-pointer shrink-0 w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:cursor-not-allowed text-white flex items-center justify-center shadow-xs transition-all active:scale-95"
+                    title="Send Query"
+                >
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : <Send className="w-3.5 h-3.5 text-white" />}
+                </button>
             </div>
 
-            {/* Suggestion chips */}
-            {!result && !loading && (
-                <div className="flex flex-wrap gap-2 mt-3.5 relative z-10">
-                    {SUGGESTIONS.map(s => (
-                        <button
-                            key={s}
-                            onClick={() => ask(s)}
-                            className="cursor-pointer flex items-center gap-1.5 text-[11px] px-2.5 py-1 bg-zinc-900/80 hover:bg-zinc-800/90 border border-white/[0.08] hover:border-violet-500/40 text-zinc-400 hover:text-zinc-200 rounded-lg transition-all"
-                        >
-                            <Search className="w-2.5 h-2.5 text-zinc-500" />
-                            <span>{s}</span>
-                        </button>
-                    ))}
-                </div>
-            )}
+            {/* Quick Suggestions Chips */}
+            <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                {SUGGESTIONS.map(s => (
+                    <button
+                        key={s}
+                        onClick={() => ask(s)}
+                        className="cursor-pointer flex items-center gap-1.5 text-xs text-slate-600 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 shadow-xs transition-all hover:border-slate-300"
+                    >
+                        <Search className="w-3 h-3 text-slate-400" />
+                        <span>{s}</span>
+                    </button>
+                ))}
+                <button
+                    onClick={() => { setQuery(''); setResult(null); inputRef.current?.focus() }}
+                    className="cursor-pointer ml-auto text-slate-400 hover:text-slate-600 p-1.5 hover:bg-slate-100 rounded-lg transition-colors"
+                    title="Clear query"
+                >
+                    <RotateCcw className="w-4 h-4" />
+                </button>
+            </div>
 
             {error && (
-                <div className="mt-3.5 flex items-center gap-2 text-xs text-red-400 bg-red-950/40 border border-red-500/30 px-3.5 py-2.5 rounded-xl">
-                    <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
+                <div className="mt-3 flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 px-3.5 py-2.5 rounded-xl">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
                     <span>{error}</span>
                 </div>
             )}
 
-            {loading && (
-                <div className="mt-4 flex items-center gap-2.5 text-xs font-mono text-zinc-400">
-                    <Loader2 className="w-4 h-4 animate-spin text-violet-400" />
-                    <span>Aggregating cross-video intelligence embeddings...</span>
-                </div>
-            )}
-
+            {/* Search Results */}
             {result && !loading && (
-                <div className="mt-4 animate-fade-up space-y-3 relative z-10">
-                    <div className="bg-violet-950/30 border border-violet-500/30 rounded-xl p-4 shadow-sm">
-                        <div className="flex items-center gap-1.5 mb-2">
-                            <Brain className="w-3.5 h-3.5 text-violet-400" />
-                            <span className="text-[10px] text-violet-300 font-mono font-semibold uppercase tracking-wider">AI Correlation Analysis</span>
+                <div className="mt-4 pt-4 border-t border-slate-100 space-y-3 animate-fade-up">
+                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                            <Brain className="w-3.5 h-3.5 text-blue-600" />
+                            <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">AI Forensic Correlation</span>
                         </div>
-                        <p className="text-xs sm:text-sm text-zinc-200 leading-relaxed whitespace-pre-wrap">
+                        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
                             {result.configured
                                 ? result.answer
                                 : 'Supermemory is not configured. Add SUPERMEMORY_API_KEY to backend/.env to persist cross-video memories.'}
@@ -301,28 +412,21 @@ function GlobalMemoryChat() {
 
                     {result.memories && result.memories.length > 0 && (
                         <div className="space-y-2">
-                            <p className="text-[10px] text-zinc-400 uppercase tracking-wider font-mono font-semibold px-1">
-                                Matched Evidence Records ({result.memories.length})
+                            <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
+                                Matched Video Records ({result.memories.length})
                             </p>
                             {result.memories.slice(0, 3).map((m, i) => (
-                                <div key={i} className="bg-zinc-900/60 border border-white/[0.08] rounded-xl p-3 shadow-sm">
-                                    <p className="text-xs text-zinc-300 line-clamp-3 leading-relaxed">{m.content?.slice(0, 250)}...</p>
+                                <div key={i} className="bg-white border border-slate-200 rounded-xl p-3 shadow-xs">
+                                    <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">{m.content?.slice(0, 250)}...</p>
                                     {m.score != null && (
-                                        <span className="text-[10px] font-mono text-violet-400 mt-1 inline-block">
-                                            similarity confidence: {(m.score * 100).toFixed(0)}%
+                                        <span className="text-[10px] text-blue-600 font-medium mt-1 inline-block">
+                                            Relevance: {(m.score * 100).toFixed(0)}%
                                         </span>
                                     )}
                                 </div>
                             ))}
                         </div>
                     )}
-
-                    <button
-                        onClick={() => { setResult(null); setQuery(''); inputRef.current?.focus() }}
-                        className="cursor-pointer text-xs font-mono text-zinc-400 hover:text-zinc-200 transition-colors pt-1 inline-flex items-center gap-1"
-                    >
-                        ← Query different topic
-                    </button>
                 </div>
             )}
         </div>
@@ -331,37 +435,33 @@ function GlobalMemoryChat() {
 
 // ─── StatCard ─────────────────────────────────────────────────────────────────
 
-function StatCard({ icon: Icon, label, value, accent, pulse, sub }: {
+function StatCard({ icon: Icon, label, value, sub, color }: {
     icon: React.ComponentType<{ className?: string }>
     label: string
     value: string | number
-    accent: 'amber' | 'emerald' | 'red' | 'violet'
-    pulse?: boolean
-    sub?: string
+    sub: string
+    color: 'blue' | 'emerald' | 'orange' | 'purple'
 }) {
-    const accents = {
-        amber:   { border: 'border-amber-500/30 hover:border-amber-500/50', iconBg: 'bg-amber-500/15 border-amber-500/30', icon: 'text-amber-400', val: 'text-amber-300', glow: 'glow-amber' },
-        emerald: { border: 'border-emerald-500/30 hover:border-emerald-500/50', iconBg: 'bg-emerald-500/15 border-emerald-500/30', icon: 'text-emerald-400', val: 'text-emerald-300', glow: 'glow-emerald' },
-        red:     { border: 'border-red-500/30 hover:border-red-500/50', iconBg: 'bg-red-500/15 border-red-500/30', icon: 'text-red-400', val: 'text-red-400', glow: 'glow-red' },
-        violet:  { border: 'border-violet-500/30 hover:border-violet-500/50', iconBg: 'bg-violet-500/15 border-violet-500/30', icon: 'text-violet-400', val: 'text-violet-300', glow: 'glow-indigo' },
+    const colorStyles = {
+        blue:    { bg: 'bg-blue-50',    border: 'border-blue-100',    icon: 'text-blue-600' },
+        emerald: { bg: 'bg-emerald-50', border: 'border-emerald-100', icon: 'text-emerald-600' },
+        orange:  { bg: 'bg-orange-50',  border: 'border-orange-100',  icon: 'text-orange-600' },
+        purple:  { bg: 'bg-purple-50',  border: 'border-purple-100',  icon: 'text-purple-600' },
     }
-    const c = accents[accent] || accents.amber
+    const c = colorStyles[color]
 
     return (
-        <div className={`glass-card rounded-2xl p-4.5 border ${c.border} relative overflow-hidden group`}>
-            <div className="flex items-center justify-between mb-2.5">
-                <div className="flex items-center gap-2">
-                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center border ${c.iconBg}`}>
-                        <Icon className={`w-3.5 h-3.5 ${c.icon}`} />
-                    </div>
-                    <span className="text-[10px] text-zinc-400 uppercase tracking-widest font-mono font-semibold">{label}</span>
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
+            <div className="flex items-center gap-2.5">
+                <div className={`w-8 h-8 rounded-lg ${c.bg} border ${c.border} flex items-center justify-center shrink-0`}>
+                    <Icon className={`w-4 h-4 ${c.icon}`} />
                 </div>
-                {pulse && <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />}
+                <span className="text-xs font-semibold text-slate-800">{label}</span>
             </div>
-            <div className="flex items-baseline justify-between mt-1">
-                <p className={`text-2xl sm:text-3xl font-extrabold font-mono tracking-tight ${c.val}`}>{value}</p>
+            <div className="mt-3">
+                <p className="text-3xl font-bold text-slate-900 tracking-tight font-sans">{value}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{sub}</p>
             </div>
-            {sub && <p className="text-[10px] text-zinc-500 mt-1 truncate">{sub}</p>}
         </div>
     )
 }
@@ -370,35 +470,30 @@ function StatCard({ icon: Icon, label, value, accent, pulse, sub }: {
 
 function VideoCard({ video: v, index, onClick }: { video: VideoInfo; index: number; onClick: () => void }) {
     const alertLevel = v.total_alerts > 5 ? 'high' : v.total_alerts > 0 ? 'medium' : 'none'
-    const borderStyle = alertLevel === 'high'
-        ? 'border-red-500/30 hover:border-red-500/60 glow-red'
-        : alertLevel === 'medium'
-            ? 'border-orange-500/30 hover:border-orange-500/60 glow-amber'
-            : 'border-white/[0.08] hover:border-white/20'
 
     return (
         <button
             onClick={onClick}
-            className={`cursor-pointer group w-full text-left glass-card rounded-2xl p-4 sm:p-5 border ${borderStyle} transition-all animate-fade-up relative overflow-hidden`}
+            className="cursor-pointer group w-full text-left bg-white hover:bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 rounded-2xl p-4 sm:p-5 shadow-xs transition-all animate-fade-up"
             style={{ animationDelay: `${index * 40}ms` }}
         >
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5 min-w-0">
-                    <div className="w-11 h-11 bg-zinc-900/90 rounded-xl flex items-center justify-center border border-white/10 shrink-0 group-hover:border-amber-500/40 transition-colors shadow-inner">
-                        <Video className="w-5 h-5 text-amber-400 group-hover:scale-110 transition-transform" />
+                    <div className="w-11 h-11 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center text-blue-600 shrink-0">
+                        <Video className="w-5 h-5 text-blue-600" />
                     </div>
                     <div className="min-w-0">
-                        <p className="text-sm font-bold text-zinc-100 truncate group-hover:text-amber-300 transition-colors">
+                        <p className="text-sm font-semibold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
                             {v.name}
                         </p>
-                        <div className="flex items-center gap-2 text-xs text-zinc-400 mt-1 font-mono">
+                        <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5 font-sans">
                             <span>{(v.duration_s / 60).toFixed(1)} min</span>
-                            <span className="text-zinc-600">·</span>
+                            <span>·</span>
                             <span>{v.total_events} event{v.total_events !== 1 ? 's' : ''}</span>
                             {v.subclips != null && v.subclips > 0 && (
                                 <>
-                                    <span className="text-zinc-600">·</span>
-                                    <span className="hidden sm:inline">{v.subclips} subclips</span>
+                                    <span>·</span>
+                                    <span>{v.subclips} subclips</span>
                                 </>
                             )}
                         </div>
@@ -407,30 +502,27 @@ function VideoCard({ video: v, index, onClick }: { video: VideoInfo; index: numb
 
                 <div className="flex items-center gap-2.5 shrink-0">
                     {v.total_alerts > 0 ? (
-                        <span className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg border font-mono font-semibold ${
+                        <span className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg border font-medium ${
                             alertLevel === 'high'
-                                ? 'bg-red-500/15 text-red-400 border-red-500/40'
-                                : 'bg-orange-500/15 text-orange-400 border-orange-500/40'
+                                ? 'bg-red-50 text-red-600 border-red-200'
+                                : 'bg-orange-50 text-orange-600 border-orange-200'
                         }`}>
                             <Shield className="w-3.5 h-3.5" />
-                            <span>{v.total_alerts} Alert{v.total_alerts !== 1 ? 's' : ''}</span>
+                            <span>{v.total_alerts} alert{v.total_alerts !== 1 ? 's' : ''}</span>
                         </span>
                     ) : (
-                        <span className="hidden sm:flex items-center gap-1 text-[11px] px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-md border border-emerald-500/20 font-mono">
-                            NORMAL
+                        <span className="hidden sm:inline-flex items-center text-xs px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md border border-emerald-200 font-medium">
+                            Normal
                         </span>
                     )}
 
                     {v.gpu && (
-                        <span className="hidden md:flex items-center gap-1 text-[10px] px-2 py-1 bg-violet-500/10 text-violet-300 rounded-lg border border-violet-500/25 font-mono">
-                            <Zap className="w-3 h-3 text-violet-400" />
-                            <span>{v.gpu}</span>
+                        <span className="hidden sm:inline-flex items-center gap-1 text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-lg border border-slate-200">
+                            {v.gpu}
                         </span>
                     )}
 
-                    <div className="w-7 h-7 rounded-lg bg-zinc-900/60 border border-white/5 flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-zinc-800 transition-all">
-                        <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                    </div>
+                    <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 group-hover:translate-x-0.5 transition-all" />
                 </div>
             </div>
         </button>
@@ -461,7 +553,7 @@ function UploadModal({ onClose, onDone }: { onClose: () => void; onDone: () => v
         setUploading(true); setError('')
         try {
             const res = await api.uploadVideo(file, setUploadProgress)
-            setProcessingStatus('Processing video with motion tracking...')
+            setProcessingStatus('Processing video motion tracking...')
             const poll = setInterval(async () => {
                 try {
                     const status = await api.uploadStatus(res.video_id)
@@ -469,8 +561,8 @@ function UploadModal({ onClose, onDone }: { onClose: () => void; onDone: () => v
                         status.status === 'uploading'  ? 'Uploading to processing server...' :
                         status.status === 'processing' ? `Analyzing video subclips... ${status.progress}%` :
                         status.status === 'analyzing'  ? 'Gemini 3.5 forensic synthesis in progress...' :
-                        status.status === 'done'       ? 'Analysis Complete!' :
-                        status.status === 'error'      ? `Error: ${status.error}` : 'Queued in pipeline...'
+                        status.status === 'done'       ? 'Analysis complete!' :
+                        status.status === 'error'      ? `Error: ${status.error}` : 'Queued...'
                     )
                     if (status.status === 'done') {
                         clearInterval(poll); setDone(true); setTimeout(onDone, 1400)
@@ -486,32 +578,30 @@ function UploadModal({ onClose, onDone }: { onClose: () => void; onDone: () => v
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
-            <div className="absolute inset-0 bg-black/75 backdrop-blur-md" onClick={onClose} />
-            <div className="relative bg-[#0d121e] rounded-2xl w-full max-w-md p-6 sm:p-7 shadow-2xl border border-white/10 animate-fade-up">
+            <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs" onClick={onClose} />
+            <div className="relative bg-white rounded-2xl w-full max-w-md p-6 sm:p-7 shadow-xl border border-slate-200 animate-fade-up">
                 <button
                     onClick={onClose}
-                    className="cursor-pointer absolute top-4 right-4 p-1.5 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/60 rounded-lg transition-all"
+                    className="cursor-pointer absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all"
                 >
                     <X className="w-4 h-4" />
                 </button>
 
-                <div className="flex items-center gap-3 mb-1">
-                    <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
-                        <Upload className="w-4 h-4 text-white" />
+                <div className="flex items-center gap-2.5 mb-1">
+                    <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+                        <Upload className="w-4 h-4" />
                     </div>
-                    <div>
-                        <h3 className="text-base font-bold text-white">Upload Surveillance Footage</h3>
-                    </div>
+                    <h3 className="text-base font-bold text-slate-900">Upload Video</h3>
                 </div>
-                <p className="text-xs text-zinc-400 mb-5 ml-11">MP4, AVI, MOV — Up to 5GB</p>
+                <p className="text-xs text-slate-400 mb-5 ml-10.5">MP4, AVI, MOV — Up to 5GB</p>
 
                 {done ? (
                     <div className="text-center py-10 animate-fade-up">
-                        <div className="w-14 h-14 bg-emerald-500/15 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-emerald-500/30 glow-emerald">
-                            <CheckCircle2 className="w-7 h-7 text-emerald-400" />
+                        <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-emerald-200">
+                            <CheckCircle2 className="w-7 h-7 text-emerald-500" />
                         </div>
-                        <p className="text-sm text-emerald-400 font-semibold font-mono">Video Analysis Ingested!</p>
-                        <p className="text-xs text-zinc-400 mt-1">Opening surveillance workspace...</p>
+                        <p className="text-sm text-emerald-600 font-semibold">Video Processed Successfully!</p>
+                        <p className="text-xs text-slate-400 mt-1">Opening surveillance workspace...</p>
                     </div>
                 ) : (
                     <>
@@ -522,10 +612,10 @@ function UploadModal({ onClose, onDone }: { onClose: () => void; onDone: () => v
                             onClick={() => fileRef.current?.click()}
                             className={`cursor-pointer border-2 border-dashed rounded-2xl p-7 text-center transition-all ${
                                 dragging
-                                    ? 'border-amber-400 bg-amber-500/10 scale-[1.01]'
+                                    ? 'border-blue-500 bg-blue-50/50 scale-[1.01]'
                                     : file
-                                        ? 'border-emerald-400/50 bg-emerald-500/10'
-                                        : 'border-white/15 hover:border-amber-400/40 bg-zinc-900/50 hover:bg-zinc-900/80'
+                                        ? 'border-emerald-300 bg-emerald-50/50'
+                                        : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50/50'
                             }`}
                         >
                             <input
@@ -537,39 +627,39 @@ function UploadModal({ onClose, onDone }: { onClose: () => void; onDone: () => v
                             />
                             {file ? (
                                 <div className="animate-fade-up">
-                                    <div className="w-11 h-11 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-2.5 border border-emerald-500/40">
-                                        <Video className="w-5 h-5 text-emerald-400" />
+                                    <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center mx-auto mb-2 border border-emerald-200">
+                                        <Video className="w-5 h-5 text-emerald-600" />
                                     </div>
-                                    <p className="text-xs sm:text-sm text-zinc-100 font-semibold truncate max-w-xs mx-auto">{file.name}</p>
-                                    <p className="text-xs text-emerald-400 font-mono mt-1">{(file.size / 1024 / 1024).toFixed(1)} MB ready to analyze</p>
+                                    <p className="text-sm text-slate-800 font-medium truncate max-w-xs mx-auto">{file.name}</p>
+                                    <p className="text-xs text-slate-400 mt-1">{(file.size / 1024 / 1024).toFixed(1)} MB ready to analyze</p>
                                 </div>
                             ) : (
                                 <div>
-                                    <div className="w-11 h-11 bg-zinc-800/80 rounded-xl flex items-center justify-center mx-auto mb-2.5 border border-white/5">
-                                        <Upload className="w-5 h-5 text-zinc-400" />
+                                    <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center mx-auto mb-2">
+                                        <Upload className="w-5 h-5 text-slate-400" />
                                     </div>
-                                    <p className="text-xs sm:text-sm text-zinc-200 font-medium">Drag & drop surveillance clip or browse</p>
-                                    <p className="text-[11px] text-zinc-500 mt-1 font-mono">YOLO11 motion segmentation + Gemini vision</p>
+                                    <p className="text-sm text-slate-700 font-medium">Drag & drop video or click to browse</p>
+                                    <p className="text-xs text-slate-400 mt-1">YOLO11 motion segmentation + Gemini multimodal</p>
                                 </div>
                             )}
                         </div>
 
                         {error && (
-                            <div className="mt-3.5 flex items-center gap-2 text-xs text-red-400 bg-red-950/40 border border-red-500/30 px-3.5 py-2.5 rounded-xl animate-fade-up">
-                                <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
+                            <div className="mt-3.5 flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 px-3.5 py-2.5 rounded-xl animate-fade-up">
+                                <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
                                 <span>{error}</span>
                             </div>
                         )}
 
                         {uploading && (
-                            <div className="mt-4.5 animate-fade-up space-y-2">
-                                <div className="flex items-center justify-between text-xs text-zinc-300 font-mono">
+                            <div className="mt-4 animate-fade-up space-y-2">
+                                <div className="flex items-center justify-between text-xs text-slate-600">
                                     <span className="truncate max-w-[280px]">{processingStatus || `Uploading... ${uploadProgress}%`}</span>
-                                    <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400 shrink-0" />
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600 shrink-0" />
                                 </div>
-                                <div className="h-2 bg-zinc-950 rounded-full overflow-hidden border border-white/10">
+                                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400 rounded-full transition-all duration-500"
+                                        className="h-full bg-blue-600 rounded-full transition-all duration-500"
                                         style={{ width: `${processingStatus ? 100 : uploadProgress}%` }}
                                     />
                                 </div>
@@ -580,9 +670,9 @@ function UploadModal({ onClose, onDone }: { onClose: () => void; onDone: () => v
                             <button
                                 onClick={handleUpload}
                                 disabled={!file}
-                                className="cursor-pointer mt-5 w-full py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:from-zinc-800 disabled:to-zinc-800 disabled:text-zinc-600 text-white rounded-xl text-sm font-semibold transition-all shadow-lg shadow-amber-500/20 active:scale-[0.98] disabled:cursor-not-allowed border border-white/10"
+                                className="cursor-pointer mt-5 w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-xl text-sm font-medium transition-all shadow-xs active:scale-[0.98] disabled:cursor-not-allowed"
                             >
-                                Ingest & Run AI Surveillance
+                                Analyze Video
                             </button>
                         )}
                     </>

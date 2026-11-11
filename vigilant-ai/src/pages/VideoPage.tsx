@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
     ArrowLeft, Shield, Clock, Users, Zap, Send, Search, Loader2,
-    AlertTriangle, ChevronDown, ChevronUp, Activity, Eye, BarChart3,
+    AlertTriangle, ChevronDown, ChevronUp, Activity, BarChart3,
     Tag, Brain, Cpu, Server, Download, Globe, FileText
 } from 'lucide-react'
 import { api, ev, type EventData, type VideoSummary, type InsightsData, type VideoInfo } from '../api'
@@ -10,26 +10,26 @@ import { api, ev, type EventData, type VideoSummary, type InsightsData, type Vid
 function fmt(s: number) { const m = Math.floor(s / 60); return `${m}:${Math.floor(s % 60).toString().padStart(2, '0')}` }
 
 function stageColor(s: string) {
-    if (s === 'C') return 'bg-red-500/15 text-red-400 border-red-500/40'
-    if (s === 'B') return 'bg-orange-500/15 text-orange-400 border-orange-500/40'
-    if (s === 'A') return 'bg-amber-500/15 text-amber-400 border-amber-500/40'
-    return 'bg-zinc-800 text-zinc-400 border-white/10'
+    if (s === 'C') return 'bg-red-50 text-red-600 border-red-200'
+    if (s === 'B') return 'bg-orange-50 text-orange-600 border-orange-200'
+    if (s === 'A') return 'bg-amber-50 text-amber-700 border-amber-200'
+    return 'bg-slate-100 text-slate-600 border-slate-200'
 }
 function stageGlow(s: string) {
-    if (s === 'C') return 'shadow-lg shadow-red-500/20 animate-pulse-ring'
-    if (s === 'B') return 'shadow-md shadow-orange-500/10'
+    if (s === 'C') return 'shadow-sm animate-pulse-ring'
+    if (s === 'B') return 'shadow-xs'
     return ''
 }
 function labelColor(l: string) {
-    if (l.includes('altercation') || l.includes('weapon') || l.includes('assault')) return 'text-red-400'
-    if (l.includes('confrontation') || l.includes('aggressive') || l.includes('fight')) return 'text-orange-400'
-    if (l.includes('trespassing') || l.includes('shoplifting') || l.includes('theft') || l.includes('steal') || l.includes('creep')) return 'text-amber-400'
-    return 'text-zinc-200'
+    if (l.includes('altercation') || l.includes('weapon') || l.includes('assault')) return 'text-red-600'
+    if (l.includes('confrontation') || l.includes('aggressive') || l.includes('fight')) return 'text-orange-600'
+    if (l.includes('trespassing') || l.includes('shoplifting') || l.includes('theft') || l.includes('steal') || l.includes('creep')) return 'text-amber-700'
+    return 'text-slate-800'
 }
 function riskBadge(r: string) {
-    if (r === 'high')   return 'bg-red-500/15 text-red-400 border-red-500/40 glow-red'
-    if (r === 'medium') return 'bg-amber-500/15 text-amber-400 border-amber-500/40 glow-amber'
-    return 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40 glow-emerald'
+    if (r === 'high')   return 'bg-red-50 text-red-600 border-red-200'
+    if (r === 'medium') return 'bg-amber-50 text-amber-700 border-amber-200'
+    return 'bg-emerald-50 text-emerald-700 border-emerald-200'
 }
 function riskAccent(r: string) {
     if (r === 'high')   return '#ef4444'
@@ -65,52 +65,38 @@ export default function VideoPage() {
     const videoName = events[0]?.video_source || alerts[0]?.video_source || videoId
 
     return (
-        <div className="min-h-screen bg-[#080c14] text-slate-100 flex flex-col relative overflow-x-hidden selection:bg-amber-500/30 selection:text-amber-200">
-            {/* Tactical Grid & Ambient glow */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden bg-tactical-grid opacity-30" />
-            <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute -top-32 right-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-3xl" />
-                {summary?.risk_level === 'high' ? (
-                    <div className="absolute bottom-1/3 left-1/4 w-[400px] h-[400px] bg-red-600/10 rounded-full blur-3xl" />
-                ) : (
-                    <div className="absolute bottom-1/3 left-1/4 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-3xl" />
-                )}
-            </div>
-
+        <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
             {/* Header */}
-            <header className="sticky top-0 z-30 bg-[#080c14]/85 backdrop-blur-2xl border-b border-white/[0.08] shadow-2xl shadow-black/40">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+            <header className="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-xs">
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                         <button
                             onClick={() => navigate('/')}
-                            className="cursor-pointer p-2 hover:bg-zinc-800/80 rounded-xl transition-all text-zinc-400 hover:text-white border border-white/5 hover:border-white/15"
-                            title="Back to feeds"
+                            className="cursor-pointer p-2 hover:bg-slate-100 rounded-xl transition-all text-slate-500 hover:text-slate-800 border border-slate-200 shadow-xs"
+                            title="Back to dashboard"
                         >
                             <ArrowLeft className="w-4 h-4" />
                         </button>
-                        <div className="relative w-8 h-8 shrink-0">
-                            <div className="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg blur-sm opacity-50" />
-                            <div className="relative w-8 h-8 bg-gradient-to-br from-[#121826] to-[#1c2438] border border-amber-500/40 rounded-lg flex items-center justify-center">
-                                <Eye className="w-4 h-4 text-amber-400" />
-                            </div>
+                        <div className="w-9 h-9 rounded-xl border border-blue-200 bg-white flex items-center justify-center text-blue-600 shadow-xs shrink-0">
+                            <Shield className="w-5 h-5" />
                         </div>
                         <div className="min-w-0">
-                            <h1 className="text-sm font-bold truncate text-white tracking-tight">{videoName}</h1>
-                            <p className="text-[10px] text-zinc-400 font-mono">
+                            <h1 className="text-sm sm:text-base font-bold truncate text-slate-900">{videoName}</h1>
+                            <p className="text-xs text-slate-400">
                                 {events.length} event{events.length !== 1 ? 's' : ''} · {alerts.length} threat alert{alerts.length !== 1 ? 's' : ''}
                             </p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-2.5 shrink-0">
                         {alerts.length > 0 && (
-                            <span className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg border font-mono font-semibold ${
+                            <span className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg border font-medium ${
                                 alerts.some(a => a.alert?.stage === 'C')
-                                    ? 'bg-red-500/20 text-red-400 border-red-500/40 animate-pulse-ring'
-                                    : 'bg-orange-500/20 text-orange-400 border-orange-500/40'
+                                    ? 'bg-red-50 text-red-600 border-red-200 animate-pulse-ring'
+                                    : 'bg-orange-50 text-orange-600 border-orange-200'
                             }`}>
                                 <Shield className="w-3.5 h-3.5" />
-                                <span>{alerts.length} Alert{alerts.length !== 1 ? 's' : ''}</span>
+                                <span>{alerts.length} alert{alerts.length !== 1 ? 's' : ''}</span>
                             </span>
                         )}
 
@@ -130,9 +116,9 @@ export default function VideoPage() {
                                     URL.revokeObjectURL(blobUrl)
                                 } finally { setReportLoading(false) }
                             }}
-                            className="cursor-pointer shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono font-medium text-zinc-300 hover:text-white bg-zinc-900/80 hover:bg-zinc-800 border border-white/10 hover:border-white/20 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                            className="cursor-pointer shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl shadow-xs transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                         >
-                            {reportLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" /> : <FileText className="w-3.5 h-3.5 text-zinc-400" />}
+                            {reportLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" /> : <FileText className="w-3.5 h-3.5 text-slate-400" />}
                             <span>TXT</span>
                         </button>
 
@@ -152,7 +138,7 @@ export default function VideoPage() {
                                     URL.revokeObjectURL(blobUrl)
                                 } finally { setPdfLoading(false) }
                             }}
-                            className="cursor-pointer shrink-0 flex items-center gap-1 px-3 py-1.5 text-xs font-mono font-medium text-amber-300 hover:text-amber-200 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
+                            className="cursor-pointer shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/70 border border-blue-200 rounded-xl shadow-xs transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                             {pdfLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
                             <span>PDF</span>
@@ -161,45 +147,45 @@ export default function VideoPage() {
                 </div>
             </header>
 
-            {/* AI Summary Hero Card */}
+            {/* AI Analysis Hero Card */}
             {summary && (
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 w-full animate-fade-up">
                     <div
-                        className="glass-panel rounded-2xl p-5 sm:p-6 shadow-2xl relative overflow-hidden border border-white/10"
+                        className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs relative overflow-hidden"
                         style={{ borderLeft: `4px solid ${riskAccent(summary.risk_level)}` }}
                     >
                         <div className="flex items-center gap-2 mb-3">
-                            <Brain className="w-4 h-4 text-amber-400" />
-                            <span className="text-xs font-bold text-amber-400 font-mono uppercase tracking-wider">AI Forensic Analysis</span>
-                            <span className={`text-[10px] px-2.5 py-0.5 rounded-full border font-mono font-bold ml-auto ${riskBadge(summary.risk_level)}`}>
+                            <Brain className="w-4 h-4 text-blue-600" />
+                            <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">AI Forensic Analysis</span>
+                            <span className={`text-xs px-2.5 py-0.5 rounded-full border font-bold ml-auto ${riskBadge(summary.risk_level)}`}>
                                 {summary.risk_level.toUpperCase()} RISK
                             </span>
                         </div>
-                        <p className="text-xs sm:text-sm text-zinc-200 leading-relaxed mb-4 whitespace-pre-line">{summary.summary}</p>
+                        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed mb-4 whitespace-pre-line">{summary.summary}</p>
                         <div className="flex flex-wrap gap-2 mb-2">
                             {summary.intent.map(i => (
-                                <span key={i} className="text-[11px] px-2.5 py-0.5 bg-violet-500/15 text-violet-300 rounded-lg border border-violet-500/30 font-mono font-medium">
+                                <span key={i} className="text-xs px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg border border-blue-200 font-medium">
                                     {i.replace(/_/g, ' ')}
                                 </span>
                             ))}
                             {summary.tags.slice(0, 5).map(t => (
-                                <span key={t} className="text-[11px] px-2 py-0.5 bg-zinc-900/80 text-zinc-400 rounded-lg border border-white/10 font-mono">
+                                <span key={t} className="text-xs px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg border border-slate-200">
                                     #{t}
                                 </span>
                             ))}
                         </div>
 
                         {summary.key_moments.length > 0 && (
-                            <div className="mt-4 border-t border-white/[0.08] pt-3.5">
-                                <p className="text-[10px] text-zinc-400 font-mono font-semibold uppercase tracking-wider mb-3">Key Surveillance Moments</p>
+                            <div className="mt-4 border-t border-slate-100 pt-3.5">
+                                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-3">Key Surveillance Moments</p>
                                 <div className="relative pl-5">
-                                    <div className="absolute left-1.5 top-1 bottom-1 w-px bg-gradient-to-b from-amber-400 via-orange-500/40 to-transparent" />
+                                    <div className="absolute left-1.5 top-1 bottom-1 w-px bg-slate-200" />
                                     <div className="space-y-3">
                                         {summary.key_moments.map((km, i) => (
                                             <div key={i} className="flex items-start gap-3 relative">
-                                                <div className="absolute -left-[15px] top-1 w-2.5 h-2.5 rounded-full bg-amber-400 border-2 border-[#0d121e] shrink-0 shadow-sm shadow-amber-400/50" />
-                                                <span className="text-amber-400 font-mono text-xs shrink-0 pt-px font-semibold">{km.time}</span>
-                                                <span className="text-zinc-300 text-xs leading-relaxed">{km.description}</span>
+                                                <div className="absolute -left-[15px] top-1 w-2.5 h-2.5 rounded-full bg-blue-600 border-2 border-white shrink-0 shadow-xs" />
+                                                <span className="text-blue-600 font-mono text-xs shrink-0 pt-px font-semibold">{km.time}</span>
+                                                <span className="text-slate-600 text-xs leading-relaxed">{km.description}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -210,30 +196,30 @@ export default function VideoPage() {
                 </div>
             )}
 
-            {/* Processing Stats chips */}
+            {/* Processing Stats Chips */}
             {videoInfo && ((videoInfo.chunks ?? 0) > 0 || (videoInfo.gpu_time_s ?? 0) > 0) && (
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-3 w-full">
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-2 w-full">
                     <div className="flex flex-wrap gap-2">
-                        {videoInfo.gpu && <StatChip icon={<Server className="w-3 h-3" />} label={videoInfo.gpu} color="violet" />}
+                        {videoInfo.gpu && <StatChip icon={<Server className="w-3 h-3" />} label={videoInfo.gpu} color="blue" />}
                         {(videoInfo.chunks ?? 0) > 0 && <StatChip icon={<Cpu className="w-3 h-3" />} label={`${videoInfo.chunks} chunks · ${videoInfo.subclips} subclips`} color="gray" />}
                         {(videoInfo.cpu_time_s ?? 0) > 0 && <StatChip icon={null} label={`CPU ${videoInfo.cpu_time_s?.toFixed(0)}s`} color="gray" />}
-                        {(videoInfo.gpu_time_s ?? 0) > 0 && <StatChip icon={<Zap className="w-3 h-3" />} label={`GPU ${videoInfo.gpu_time_s?.toFixed(0)}s`} color="violet" />}
+                        {(videoInfo.gpu_time_s ?? 0) > 0 && <StatChip icon={<Zap className="w-3 h-3" />} label={`GPU ${videoInfo.gpu_time_s?.toFixed(0)}s`} color="blue" />}
                         {(videoInfo.processing_time_s ?? 0) > 0 && <StatChip icon={<Clock className="w-3 h-3" />} label={`Total ${videoInfo.processing_time_s?.toFixed(0)}s`} color="gray" />}
                     </div>
                 </div>
             )}
 
             {/* Tabs */}
-            <div className="border-b border-white/[0.08] bg-[#080c14]/90 backdrop-blur-xl sticky top-[57px] z-20">
+            <div className="border-b border-slate-200 bg-white sticky top-[61px] z-20">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 flex gap-1">
                     {(['chat', 'alerts', 'events', 'insights', 'memory'] as const).map(t => (
                         <button
                             key={t}
                             onClick={() => setTab(t)}
-                            className={`cursor-pointer px-4 py-3 text-xs font-mono font-semibold transition-all border-b-2 capitalize tracking-wide ${
+                            className={`cursor-pointer px-4 py-3 text-xs sm:text-sm font-medium transition-all border-b-2 capitalize tracking-normal ${
                                 tab === t
-                                    ? 'text-amber-400 border-amber-400 bg-amber-500/10'
-                                    : 'text-zinc-400 border-transparent hover:text-zinc-200 hover:border-zinc-700'
+                                    ? 'text-blue-600 border-blue-600 font-semibold'
+                                    : 'text-slate-500 border-transparent hover:text-slate-800 hover:border-slate-300'
                             }`}
                         >
                             {t === 'alerts'   ? `Alerts (${alerts.length})` :
@@ -249,8 +235,8 @@ export default function VideoPage() {
             <div className="flex-1 overflow-hidden relative z-10">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-24 gap-3">
-                        <Loader2 className="w-7 h-7 animate-spin text-amber-400" />
-                        <p className="text-xs text-zinc-400 font-mono">Loading surveillance analysis...</p>
+                        <Loader2 className="w-7 h-7 animate-spin text-blue-600" />
+                        <p className="text-xs text-slate-400">Loading analysis data...</p>
                     </div>
                 ) : tab === 'chat' ? (
                     <ChatPanel videoId={videoId} />
@@ -271,13 +257,13 @@ export default function VideoPage() {
 function StatChip({ icon, label, color }: {
     icon: React.ReactNode
     label: string
-    color: 'violet' | 'gray'
+    color: 'blue' | 'gray'
 }) {
-    const cls = color === 'violet'
-        ? 'bg-violet-500/10 text-violet-300 border-violet-500/25'
-        : 'bg-zinc-900/80 text-zinc-300 border-white/10'
+    const cls = color === 'blue'
+        ? 'bg-blue-50 text-blue-700 border-blue-200'
+        : 'bg-white text-slate-600 border-slate-200 shadow-xs'
     return (
-        <span className={`inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg border font-mono font-medium ${cls}`}>
+        <span className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg border font-medium ${cls}`}>
             {icon}
             <span>{label}</span>
         </span>
@@ -294,11 +280,11 @@ function CardList({ items, emptyIcon: Icon, emptyText }: {
     const [expanded, setExpanded] = useState<string | null>(null)
 
     if (items.length === 0) return (
-        <div className="text-center py-24 text-zinc-500">
-            <div className="w-14 h-14 bg-zinc-900 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
-                <Icon className="w-7 h-7 opacity-40" />
+        <div className="text-center py-24 text-slate-400">
+            <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-200">
+                <Icon className="w-7 h-7 opacity-40 text-slate-400" />
             </div>
-            <p className="text-sm font-mono">{emptyText}</p>
+            <p className="text-sm font-medium">{emptyText}</p>
         </div>
     )
 
@@ -313,58 +299,58 @@ function CardList({ items, emptyIcon: Icon, emptyText }: {
                     <button
                         key={e.clipId}
                         onClick={() => setExpanded(isOpen ? null : e.clipId)}
-                        className={`cursor-pointer w-full text-left glass-card rounded-2xl p-4 sm:p-5 transition-all animate-fade-up border ${
+                        className={`cursor-pointer w-full text-left bg-white border rounded-2xl p-4 sm:p-5 transition-all animate-fade-up shadow-xs ${
                             isStageC
-                                ? 'border-red-500/40 hover:border-red-500/70 glow-red'
-                                : 'border-white/[0.08] hover:border-white/20'
+                                ? 'border-red-200 hover:border-red-300'
+                                : 'border-slate-200 hover:border-slate-300'
                         } ${stageGlow(e.alertStage)}`}
                         style={{ animationDelay: `${idx * 25}ms` }}
                     >
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2.5 min-w-0">
                                 {e.alertStage !== 'none' && (
-                                    <span className={`text-[10px] px-2 py-0.5 rounded-md border font-mono font-bold shrink-0 ${stageColor(e.alertStage)}`}>
+                                    <span className={`text-[10px] px-2 py-0.5 rounded-md border font-bold shrink-0 ${stageColor(e.alertStage)}`}>
                                         STAGE {e.alertStage}
                                     </span>
                                 )}
-                                <span className={`text-sm font-bold truncate ${labelColor(e.label)}`}>
+                                <span className={`text-sm font-semibold truncate ${labelColor(e.label)}`}>
                                     {e.label.replace(/_/g, ' ')}
                                 </span>
                             </div>
                             <div className="flex items-center gap-3 shrink-0">
                                 {e.alertScore > 0 && (
                                     <span className={`text-xs font-mono font-bold ${
-                                        e.alertScore > 0.7 ? 'text-red-400' : e.alertScore > 0.4 ? 'text-orange-400' : 'text-zinc-400'
+                                        e.alertScore > 0.7 ? 'text-red-500' : e.alertScore > 0.4 ? 'text-orange-500' : 'text-slate-400'
                                     }`}>
                                         score {e.alertScore.toFixed(2)}
                                     </span>
                                 )}
-                                <span className="text-xs font-mono text-zinc-400">{fmt(e.start)}–{fmt(e.end)}</span>
-                                {isOpen ? <ChevronUp className="w-4 h-4 text-zinc-500" /> : <ChevronDown className="w-4 h-4 text-zinc-500" />}
+                                <span className="text-xs font-mono text-slate-400">{fmt(e.start)}–{fmt(e.end)}</span>
+                                {isOpen ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
                             </div>
                         </div>
 
                         {e.caption && (
-                            <p className="text-xs text-zinc-300 mt-2 leading-relaxed line-clamp-2">{e.caption}</p>
+                            <p className="text-xs text-slate-600 mt-2 leading-relaxed line-clamp-2">{e.caption}</p>
                         )}
 
                         {isOpen && (
-                            <div className="mt-4 pt-3.5 border-t border-white/[0.08] grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono animate-fade-in">
-                                <div className="bg-zinc-900/80 p-2.5 rounded-xl border border-white/5">
-                                    <span className="text-[10px] text-zinc-500 block">PEOPLE DETECTED</span>
-                                    <span className="text-sm font-bold text-zinc-200">{e.people}</span>
+                            <div className="mt-4 pt-3.5 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-sans animate-fade-in">
+                                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                                    <span className="text-[10px] text-slate-400 block font-semibold">PEOPLE DETECTED</span>
+                                    <span className="text-sm font-bold text-slate-800">{e.people}</span>
                                 </div>
-                                <div className="bg-zinc-900/80 p-2.5 rounded-xl border border-white/5">
-                                    <span className="text-[10px] text-zinc-500 block">PEAK MOTION</span>
-                                    <span className="text-sm font-bold text-zinc-200">{(e.peakMotion * 100).toFixed(0)}%</span>
+                                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                                    <span className="text-[10px] text-slate-400 block font-semibold">PEAK MOTION</span>
+                                    <span className="text-sm font-bold text-slate-800">{(e.peakMotion * 100).toFixed(0)}%</span>
                                 </div>
-                                <div className="bg-zinc-900/80 p-2.5 rounded-xl border border-white/5">
-                                    <span className="text-[10px] text-zinc-500 block">CONFIDENCE</span>
-                                    <span className="text-sm font-bold text-zinc-200">{(e.confidence * 100).toFixed(0)}%</span>
+                                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                                    <span className="text-[10px] text-slate-400 block font-semibold">CONFIDENCE</span>
+                                    <span className="text-sm font-bold text-slate-800">{(e.confidence * 100).toFixed(0)}%</span>
                                 </div>
-                                <div className="bg-zinc-900/80 p-2.5 rounded-xl border border-white/5">
-                                    <span className="text-[10px] text-zinc-500 block">DURATION</span>
-                                    <span className="text-sm font-bold text-zinc-200">{e.duration.toFixed(1)}s</span>
+                                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                                    <span className="text-[10px] text-slate-400 block font-semibold">DURATION</span>
+                                    <span className="text-sm font-bold text-slate-800">{e.duration.toFixed(1)}s</span>
                                 </div>
                             </div>
                         )}
@@ -401,7 +387,7 @@ function ChatPanel({ videoId }: { videoId: string }) {
             } else {
                 setMessages([{
                     id: 'init', role: 'assistant',
-                    text: 'Ask me anything about this video. I\'ll inspect the footage and give you specific answers with timestamps.\n\nTry: "What happened?", "Any theft or fighting?", "Who was involved?"',
+                    text: 'Ask me anything about this video. I\'ll search the footage and give you specific answers with timestamps.\n\nTry: "What happened?", "Any theft or fighting?", "Who was involved?"',
                 }])
             }
         }).catch(() => {
@@ -447,7 +433,7 @@ function ChatPanel({ videoId }: { videoId: string }) {
             ))
         } catch {
             setMessages(prev => prev.map(m => m.id === loadId
-                ? { ...m, loading: false, streaming: false, text: 'Search query failed. Please verify backend connection.' }
+                ? { ...m, loading: false, streaming: false, text: 'Search query failed. Please verify connection.' }
                 : m
             ))
         } finally {
@@ -456,7 +442,7 @@ function ChatPanel({ videoId }: { videoId: string }) {
     }
 
     return (
-        <div className="flex flex-col h-[calc(100vh-220px)] bg-[#080c14] relative">
+        <div className="flex flex-col h-[calc(100vh-230px)] bg-[#F8FAFC]">
             {/* Messages container */}
             <div className="flex-1 overflow-y-auto py-6">
                 <div className="max-w-3xl mx-auto px-4 space-y-6">
@@ -464,29 +450,29 @@ function ChatPanel({ videoId }: { videoId: string }) {
                         msg.role === 'user' ? (
                             /* User message bubble */
                             <div key={msg.id} className="flex justify-end animate-fade-up">
-                                <div className="max-w-[80%] bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-2xl rounded-br-sm px-4.5 py-3 shadow-lg shadow-amber-500/20">
+                                <div className="max-w-[80%] bg-blue-600 text-white rounded-2xl rounded-br-sm px-4.5 py-3 shadow-xs">
                                     <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-medium">{msg.text}</p>
                                 </div>
                             </div>
                         ) : (
                             /* AI message */
                             <div key={msg.id} className="flex gap-3.5 animate-fade-up">
-                                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 border border-violet-400/30 flex items-center justify-center shrink-0 mt-0.5 shadow-md shadow-violet-500/20">
-                                    <Brain className="w-4 h-4 text-white" />
+                                <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                                    <Brain className="w-4 h-4" />
                                 </div>
                                 <div className="flex-1 min-w-0 pt-0.5">
                                     {msg.loading ? (
                                         <div className="flex items-center gap-2 pt-2">
-                                            <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                                            <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '160ms' }} />
-                                            <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '320ms' }} />
+                                            <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                            <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '160ms' }} />
+                                            <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '320ms' }} />
                                         </div>
                                     ) : (
-                                        <div className="glass-panel rounded-2xl p-4.5 border border-white/10 shadow-lg">
-                                            <p className="text-xs sm:text-sm text-zinc-100 leading-relaxed whitespace-pre-wrap">
+                                        <div className="bg-white rounded-2xl p-4.5 border border-slate-200/80 shadow-xs">
+                                            <p className="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
                                                 {msg.text}
                                                 {msg.streaming && (
-                                                    <span className="inline-block w-1.5 h-4 bg-amber-400 ml-1 animate-blink-cursor align-middle" />
+                                                    <span className="inline-block w-1.5 h-4 bg-blue-600 ml-1 animate-blink-cursor align-middle" />
                                                 )}
                                             </p>
                                         </div>
@@ -495,7 +481,7 @@ function ChatPanel({ videoId }: { videoId: string }) {
                                     {/* Matching clips */}
                                     {msg.results && msg.results.length > 0 && (
                                         <div className="mt-3.5 space-y-2.5 animate-fade-up">
-                                            <p className="text-[10px] text-zinc-400 font-mono font-semibold uppercase tracking-wider px-1">
+                                            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider px-1">
                                                 {msg.results.length} Evidence Clip{msg.results.length !== 1 ? 's' : ''} Identified
                                             </p>
                                             {msg.results.slice(0, 5).map((raw, i) => {
@@ -503,12 +489,12 @@ function ChatPanel({ videoId }: { videoId: string }) {
                                                 return (
                                                     <div
                                                         key={e.clipId || i}
-                                                        className="glass-card rounded-xl p-3 text-xs shadow-md border border-white/[0.08] hover:border-amber-400/40 transition-colors animate-fade-up"
+                                                        className="bg-white rounded-xl p-3.5 text-xs shadow-xs border border-slate-200 hover:border-slate-300 transition-colors animate-fade-up"
                                                         style={{ animationDelay: `${i * 50}ms` }}
                                                     >
-                                                        <div className="flex items-center gap-2.5 font-mono">
-                                                            <span className="text-zinc-500 font-semibold">#{i + 1}</span>
-                                                            <span className={`font-bold ${labelColor(e.label)}`}>
+                                                        <div className="flex items-center gap-2.5">
+                                                            <span className="text-slate-400 font-semibold font-mono">#{i + 1}</span>
+                                                            <span className={`font-semibold ${labelColor(e.label)}`}>
                                                                 {e.label.replace(/_/g, ' ')}
                                                             </span>
                                                             {e.alertStage !== 'none' && (
@@ -516,10 +502,10 @@ function ChatPanel({ videoId }: { videoId: string }) {
                                                                     STAGE {e.alertStage}
                                                                 </span>
                                                             )}
-                                                            <span className="text-amber-400 ml-auto font-semibold">{fmt(e.start)}–{fmt(e.end)}</span>
+                                                            <span className="text-blue-600 ml-auto font-mono font-medium">{fmt(e.start)}–{fmt(e.end)}</span>
                                                         </div>
                                                         {e.caption && (
-                                                            <p className="text-zinc-300 mt-1.5 line-clamp-2 leading-relaxed text-[11px]">{e.caption}</p>
+                                                            <p className="text-slate-600 mt-1.5 line-clamp-2 leading-relaxed text-[11px]">{e.caption}</p>
                                                         )}
                                                     </div>
                                                 )
@@ -535,33 +521,31 @@ function ChatPanel({ videoId }: { videoId: string }) {
             </div>
 
             {/* Input bar */}
-            <div className="bg-[#080c14]/95 border-t border-white/[0.08] px-4 py-4 backdrop-blur-xl">
+            <div className="bg-white border-t border-slate-200 px-4 py-3.5">
                 <div className="max-w-3xl mx-auto">
-                    <div className="bg-zinc-950/80 border border-white/10 rounded-2xl shadow-inner focus-within:border-amber-500/50 focus-within:ring-2 focus-within:ring-amber-500/20 transition-all">
-                        <div className="flex items-center gap-3 px-4 py-3">
-                            <Search className="w-4 h-4 text-zinc-500 shrink-0" />
-                            <input
-                                type="text"
-                                value={input}
-                                onChange={e => setInput(e.target.value)}
-                                onKeyDown={e => e.key === 'Enter' && handleSend()}
-                                placeholder="Ask questions about this video footage (e.g. 'what did the person do?')..."
-                                disabled={searching}
-                                className="flex-1 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 outline-none bg-transparent disabled:opacity-50"
-                            />
-                            <button
-                                onClick={handleSend}
-                                disabled={searching || !input.trim()}
-                                className="cursor-pointer shrink-0 p-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:from-zinc-800 disabled:to-zinc-800 disabled:text-zinc-600 text-white rounded-xl transition-all active:scale-95 disabled:cursor-not-allowed shadow-md"
-                            >
-                                {searching
-                                    ? <Loader2 className="w-4 h-4 text-white animate-spin" />
-                                    : <Send className="w-4 h-4 text-white" />
-                                }
-                            </button>
-                        </div>
+                    <div className="border border-slate-200 rounded-xl px-4 py-2.5 flex items-center gap-3 bg-white shadow-xs focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+                        <Search className="w-4 h-4 text-slate-400 shrink-0" />
+                        <input
+                            type="text"
+                            value={input}
+                            onChange={e => setInput(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && handleSend()}
+                            placeholder="Ask questions about this video footage (e.g. 'what did the person do?')..."
+                            disabled={searching}
+                            className="flex-1 text-xs sm:text-sm text-slate-800 placeholder-slate-400 outline-none bg-transparent disabled:opacity-50"
+                        />
+                        <button
+                            onClick={handleSend}
+                            disabled={searching || !input.trim()}
+                            className="cursor-pointer shrink-0 w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white flex items-center justify-center transition-all shadow-xs active:scale-95 disabled:cursor-not-allowed"
+                        >
+                            {searching
+                                ? <Loader2 className="w-4 h-4 text-white animate-spin" />
+                                : <Send className="w-3.5 h-3.5 text-white" />
+                            }
+                        </button>
                     </div>
-                    <p className="text-center text-[10px] text-zinc-500 font-mono mt-2">
+                    <p className="text-center text-[10px] text-slate-400 mt-2">
                         CLIP semantic search · Gemini 3.5 forensic streaming
                     </p>
                 </div>
@@ -601,49 +585,47 @@ function MemoryPanel({ videoId }: { videoId: string }) {
 
     return (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 space-y-4">
-            <div className="glass-panel rounded-2xl p-4.5 flex gap-3.5 border border-white/10 shadow-lg">
-                <Globe className="w-5 h-5 text-violet-400 shrink-0 mt-0.5" />
+            <div className="bg-white rounded-2xl p-4.5 flex gap-3.5 border border-slate-200/80 shadow-xs">
+                <Globe className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                 <div>
-                    <p className="text-sm font-bold text-white mb-0.5">Cross-Video Surveillance Intelligence</p>
-                    <p className="text-xs text-zinc-400 leading-relaxed">
-                        Query persistent memory across <span className="text-zinc-200 font-semibold">all</span> ingested surveillance streams to spot repeat suspects and security threats.
+                    <p className="text-sm font-bold text-slate-900 mb-0.5">Cross-Video Surveillance Intelligence</p>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                        Query persistent memory across <span className="text-slate-700 font-semibold">all</span> ingested surveillance streams to spot repeat suspects and security threats.
                     </p>
                 </div>
             </div>
 
-            <div className="glass-panel rounded-2xl p-5 border border-white/10 shadow-lg space-y-3.5">
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-3.5">
                 <div className="flex items-center justify-between">
-                    <p className="text-[10px] text-zinc-400 uppercase tracking-wider font-mono font-semibold">Memory Query</p>
-                    <label className="flex items-center gap-1.5 text-xs text-zinc-400 cursor-pointer select-none">
+                    <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Memory Query</p>
+                    <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer select-none">
                         <input
                             type="checkbox"
                             checked={scoped}
                             onChange={e => setScoped(e.target.checked)}
-                            className="w-3.5 h-3.5 accent-amber-500 rounded bg-zinc-900 border-white/20"
+                            className="w-3.5 h-3.5 accent-blue-600 rounded"
                         />
                         <span>Scope to this video only</span>
                     </label>
                 </div>
 
-                <div className="bg-zinc-950/80 border border-white/10 rounded-xl shadow-inner focus-within:border-violet-500/50 focus-within:ring-2 focus-within:ring-violet-500/20 transition-all">
-                    <div className="flex items-center gap-3 px-4 py-3">
-                        <Search className="w-4 h-4 text-zinc-500 shrink-0" />
-                        <input
-                            type="text"
-                            value={query}
-                            onChange={e => setQuery(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && handleQuery()}
-                            placeholder="e.g. Has this person or similar prowler been observed before?"
-                            className="flex-1 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 outline-none bg-transparent"
-                        />
-                        <button
-                            onClick={handleQuery}
-                            disabled={loading || !query.trim()}
-                            className="cursor-pointer shrink-0 p-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:from-zinc-800 disabled:to-zinc-800 text-white rounded-lg transition-all active:scale-95 disabled:cursor-not-allowed"
-                        >
-                            {loading ? <Loader2 className="w-4 h-4 text-white animate-spin" /> : <Search className="w-4 h-4 text-white" />}
-                        </button>
-                    </div>
+                <div className="border border-slate-200 rounded-xl px-4 py-2.5 flex items-center gap-3 bg-white shadow-xs focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+                    <Search className="w-4 h-4 text-slate-400 shrink-0" />
+                    <input
+                        type="text"
+                        value={query}
+                        onChange={e => setQuery(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && handleQuery()}
+                        placeholder="e.g. Has this person or similar prowler been observed before?"
+                        className="flex-1 text-xs sm:text-sm text-slate-800 placeholder-slate-400 outline-none bg-transparent"
+                    />
+                    <button
+                        onClick={handleQuery}
+                        disabled={loading || !query.trim()}
+                        className="cursor-pointer shrink-0 w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 text-white flex items-center justify-center transition-all active:scale-95 disabled:cursor-not-allowed shadow-xs"
+                    >
+                        {loading ? <Loader2 className="w-4 h-4 text-white animate-spin" /> : <Search className="w-4 h-4 text-white" />}
+                    </button>
                 </div>
 
                 {!result && !loading && (
@@ -652,7 +634,7 @@ function MemoryPanel({ videoId }: { videoId: string }) {
                             <button
                                 key={s}
                                 onClick={() => setQuery(s)}
-                                className="cursor-pointer text-[11px] px-2.5 py-1 bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 border border-white/[0.08] rounded-lg transition-all"
+                                className="cursor-pointer text-xs px-3 py-1.5 bg-slate-50 text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all"
                             >
                                 {s}
                             </button>
@@ -662,43 +644,43 @@ function MemoryPanel({ videoId }: { videoId: string }) {
             </div>
 
             {loading && (
-                <div className="flex items-center justify-center gap-2.5 py-8 text-zinc-400 text-xs font-mono">
-                    <Loader2 className="w-4 h-4 animate-spin text-violet-400" />
+                <div className="flex items-center justify-center gap-2.5 py-8 text-slate-400 text-xs">
+                    <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
                     <span>Searching cross-stream surveillance memories...</span>
                 </div>
             )}
-            {error && <div className="bg-red-950/40 border border-red-500/30 rounded-xl p-4 text-xs text-red-400">{error}</div>}
+            {error && <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-xs text-red-600">{error}</div>}
             {result && !result.configured && (
-                <div className="glass-card rounded-2xl p-6 text-center space-y-2 border border-white/10 shadow-lg">
-                    <Globe className="w-8 h-8 text-zinc-500 mx-auto" />
-                    <p className="text-sm text-zinc-300 font-semibold">Supermemory API key not configured</p>
-                    <p className="text-xs text-zinc-400 font-mono">Set <code className="bg-zinc-900 px-2 py-0.5 rounded text-amber-300 border border-white/10">SUPERMEMORY_API_KEY</code> in backend/.env</p>
+                <div className="bg-white rounded-2xl p-6 text-center space-y-2 border border-slate-200/80 shadow-xs">
+                    <Globe className="w-8 h-8 text-slate-400 mx-auto" />
+                    <p className="text-sm text-slate-700 font-semibold">Supermemory API key not configured</p>
+                    <p className="text-xs text-slate-400">Set <code className="bg-slate-100 px-2 py-0.5 rounded text-slate-700 font-mono">SUPERMEMORY_API_KEY</code> in backend/.env</p>
                 </div>
             )}
             {result && result.configured && (
                 <div className="space-y-3.5 animate-fade-up">
-                    <div className="glass-panel rounded-2xl p-5 border border-violet-500/30 shadow-lg" style={{ borderLeft: '4px solid #8b5cf6' }}>
+                    <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs" style={{ borderLeft: '4px solid #2563eb' }}>
                         <div className="flex items-center gap-2 mb-2">
-                            <Brain className="w-4 h-4 text-violet-400" />
-                            <span className="text-[10px] text-violet-300 uppercase font-mono tracking-wider font-semibold">Intelligence Synthesis</span>
+                            <Brain className="w-4 h-4 text-blue-600" />
+                            <span className="text-[10px] text-blue-600 uppercase font-semibold tracking-wider">Intelligence Synthesis</span>
                         </div>
-                        <p className="text-xs sm:text-sm text-zinc-200 leading-relaxed whitespace-pre-wrap">{result.answer}</p>
+                        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{result.answer}</p>
                     </div>
                     {result.memories.length > 0 && (
                         <div className="space-y-2">
-                            <p className="text-[10px] text-zinc-400 uppercase tracking-wider font-mono font-semibold px-1">
+                            <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold px-1">
                                 {result.memories.length} Matched Surveillance Record{result.memories.length !== 1 ? 's' : ''}
                             </p>
                             {result.memories.map((mem, i) => (
-                                <div key={i} className="glass-card rounded-xl p-3.5 shadow-md border border-white/[0.08]" style={{ animationDelay: `${i * 60}ms` }}>
+                                <div key={i} className="bg-white rounded-xl p-3.5 shadow-xs border border-slate-200" style={{ animationDelay: `${i * 60}ms` }}>
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-1.5">
-                                            <FileText className="w-3.5 h-3.5 text-zinc-500" />
-                                            <span className="text-[10px] text-zinc-400 font-mono font-semibold">Record #{i + 1}</span>
+                                            <FileText className="w-3.5 h-3.5 text-slate-400" />
+                                            <span className="text-[10px] text-slate-500 font-semibold">Record #{i + 1}</span>
                                         </div>
-                                        {mem.score > 0 && <span className="text-[10px] text-violet-400 font-mono font-semibold">score {mem.score.toFixed(3)}</span>}
+                                        {mem.score > 0 && <span className="text-[10px] text-blue-600 font-semibold">Score: {(mem.score * 100).toFixed(0)}%</span>}
                                     </div>
-                                    <p className="text-xs text-zinc-300 leading-relaxed line-clamp-4 whitespace-pre-line">
+                                    <p className="text-xs text-slate-600 leading-relaxed line-clamp-4 whitespace-pre-line">
                                         {mem.content.slice(0, 400)}{mem.content.length > 400 && '…'}
                                     </p>
                                 </div>
@@ -723,15 +705,15 @@ function InsightsPanel({ videoId }: { videoId: string }) {
 
     if (loading) return (
         <div className="flex justify-center py-24">
-            <Loader2 className="w-6 h-6 animate-spin text-amber-400" />
+            <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
         </div>
     )
     if (!data) return (
-        <div className="text-center py-24 text-zinc-500">
-            <div className="w-14 h-14 bg-zinc-900 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
-                <BarChart3 className="w-7 h-7 opacity-40" />
+        <div className="text-center py-24 text-slate-400">
+            <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-200">
+                <BarChart3 className="w-7 h-7 opacity-40 text-slate-400" />
             </div>
-            <p className="text-sm font-mono">No telemetry insights available</p>
+            <p className="text-sm">No telemetry insights available</p>
         </div>
     )
 
@@ -742,50 +724,50 @@ function InsightsPanel({ videoId }: { videoId: string }) {
             {/* Stats bento */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                    { label: 'Total Events', value: data.total_events, icon: Activity, cls: 'border-indigo-500/30 text-indigo-300 glow-indigo' },
-                    { label: 'Threat Alerts', value: data.total_alerts, icon: AlertTriangle, cls: 'border-red-500/30 text-red-400 glow-red' },
-                    { label: 'Event Types', value: Object.keys(data.event_types).length, icon: Tag, cls: 'border-violet-500/30 text-violet-300' },
-                    { label: 'Max People', value: Math.max(...data.timeline.map(t => t.people), 0), icon: Users, cls: 'border-emerald-500/30 text-emerald-300 glow-emerald' },
+                    { label: 'Total Events', value: data.total_events, icon: Activity, cls: 'bg-blue-50 border-blue-100 text-blue-600' },
+                    { label: 'Threat Alerts', value: data.total_alerts, icon: AlertTriangle, cls: 'bg-red-50 border-red-100 text-red-600' },
+                    { label: 'Event Types', value: Object.keys(data.event_types).length, icon: Tag, cls: 'bg-purple-50 border-purple-100 text-purple-600' },
+                    { label: 'Max People', value: Math.max(...data.timeline.map(t => t.people), 0), icon: Users, cls: 'bg-emerald-50 border-emerald-100 text-emerald-600' },
                 ].map(({ label, value, icon: Icon, cls }) => (
-                    <div key={label} className={`glass-card rounded-2xl p-4 border animate-fade-up ${cls}`}>
+                    <div key={label} className={`rounded-2xl p-4 border animate-fade-up ${cls}`}>
                         <div className="flex items-center gap-2 mb-2">
                             <Icon className="w-3.5 h-3.5 opacity-80" />
-                            <span className="text-[10px] text-zinc-400 uppercase font-mono font-semibold tracking-wider">{label}</span>
+                            <span className="text-[10px] uppercase font-bold tracking-wider">{label}</span>
                         </div>
-                        <div className="text-2xl font-bold font-mono">{value}</div>
+                        <div className="text-2xl font-bold">{value}</div>
                     </div>
                 ))}
             </div>
 
             {/* Event distribution */}
-            <div className="glass-panel rounded-2xl p-5 border border-white/10 shadow-lg">
-                <h3 className="text-[10px] font-bold font-mono text-zinc-400 uppercase tracking-widest mb-4">Classified Event Distribution</h3>
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Classified Event Distribution</h3>
                 <div className="space-y-3">
                     {Object.entries(data.event_types).sort((a, b) => b[1] - a[1]).map(([label, count]) => (
                         <div key={label} className="flex items-center gap-3">
                             <span className={`text-xs w-40 truncate font-semibold ${labelColor(label)}`}>{label.replace(/_/g, ' ')}</span>
-                            <div className="flex-1 bg-zinc-900 rounded-full h-2.5 overflow-hidden border border-white/5">
+                            <div className="flex-1 bg-slate-100 rounded-full h-2.5 overflow-hidden">
                                 <div
-                                    className="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400 rounded-full transition-all duration-700"
+                                    className="h-full bg-blue-600 rounded-full transition-all duration-700"
                                     style={{ width: `${(count / maxTypeCount) * 100}%` }}
                                 />
                             </div>
-                            <span className="text-xs text-zinc-400 w-8 text-right font-mono">{count}</span>
+                            <span className="text-xs text-slate-500 w-8 text-right font-mono">{count}</span>
                         </div>
                     ))}
                 </div>
             </div>
 
             {/* Alert severity */}
-            <div className="glass-panel rounded-2xl p-5 border border-white/10 shadow-lg">
-                <h3 className="text-[10px] font-bold font-mono text-zinc-400 uppercase tracking-widest mb-4">Threat Alert Severity</h3>
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Threat Alert Severity</h3>
                 <div className="flex gap-3">
                     {(['C', 'B', 'A'] as const).map(stage => {
                         const count = data.alert_stages[stage] || 0
                         return (
-                            <div key={stage} className={`flex-1 glass-card rounded-2xl p-4 border ${stageColor(stage)} ${count > 0 ? stageGlow(stage) : ''}`}>
+                            <div key={stage} className={`flex-1 rounded-2xl p-4 border ${stageColor(stage)} ${count > 0 ? stageGlow(stage) : ''}`}>
                                 <div className="text-2xl font-bold font-mono">{count}</div>
-                                <div className="text-[11px] font-mono opacity-70 mt-1">Stage {stage} Threats</div>
+                                <div className="text-[11px] opacity-70 mt-1">Stage {stage} Threats</div>
                             </div>
                         )
                     })}
@@ -793,9 +775,9 @@ function InsightsPanel({ videoId }: { videoId: string }) {
             </div>
 
             {/* Activity Timeline */}
-            <div className="glass-panel rounded-2xl p-5 border border-white/10 shadow-lg">
-                <h3 className="text-[10px] font-bold font-mono text-zinc-400 uppercase tracking-widest mb-3">Surveillance Activity Timeline</h3>
-                <div className="relative h-20 bg-zinc-950 rounded-xl overflow-hidden border border-white/10">
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Surveillance Activity Timeline</h3>
+                <div className="relative h-20 bg-slate-50 rounded-xl overflow-hidden border border-slate-200">
                     {data.timeline.length > 0 && (() => {
                         const maxEnd = Math.max(...data.timeline.map(t => t.end), 1)
                         return data.timeline.map((t, i) => {
@@ -803,7 +785,7 @@ function InsightsPanel({ videoId }: { videoId: string }) {
                             const width = Math.max(((t.end - t.start) / maxEnd) * 100, 0.75)
                             const color = t.alert_stage === 'C' ? 'bg-red-500' :
                                           t.alert_stage === 'B' ? 'bg-orange-500' :
-                                          t.alert_stage === 'A' ? 'bg-amber-400' : 'bg-indigo-500'
+                                          t.alert_stage === 'A' ? 'bg-amber-400' : 'bg-blue-500'
                             return (
                                 <div key={i}
                                     title={`${fmt(t.start)}–${fmt(t.end)} | ${t.label}`}
@@ -814,7 +796,7 @@ function InsightsPanel({ videoId }: { videoId: string }) {
                         })
                     })()}
                 </div>
-                <div className="flex justify-between text-[10px] font-mono text-zinc-400 mt-2 px-1">
+                <div className="flex justify-between text-[10px] font-mono text-slate-400 mt-2 px-1">
                     <span>0:00</span>
                     <span>{fmt(Math.max(...data.timeline.map(t => t.end), 0))}</span>
                 </div>
