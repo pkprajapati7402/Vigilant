@@ -1,10 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import {
-    ArrowLeft, Shield, Clock, Users, Zap, Send, Search, Loader2,
-    AlertTriangle, ChevronDown, ChevronUp, Activity, BarChart3,
-    Tag, Brain, Cpu, Server, Download, Globe, FileText
-} from 'lucide-react'
+import { Loader2, ChevronDown, ChevronUp } from 'lucide-react'
+import { Flaticon } from '../components/Flaticon'
 import { api, ev, type EventData, type VideoSummary, type InsightsData, type VideoInfo } from '../api'
 
 function fmt(s: number) { const m = Math.floor(s / 60); return `${m}:${Math.floor(s % 60).toString().padStart(2, '0')}` }
@@ -68,17 +65,17 @@ export default function VideoPage() {
         <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
             {/* Header */}
             <header className="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-xs">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                         <button
                             onClick={() => navigate('/')}
                             className="cursor-pointer p-2 hover:bg-slate-100 rounded-xl transition-all text-slate-500 hover:text-slate-800 border border-slate-200 shadow-xs"
                             title="Back to dashboard"
                         >
-                            <ArrowLeft className="w-4 h-4" />
+                            <Flaticon name="angle-small-left" className="text-base" />
                         </button>
                         <div className="w-9 h-9 rounded-xl border border-blue-200 bg-white flex items-center justify-center text-blue-600 shadow-xs shrink-0">
-                            <Shield className="w-5 h-5" />
+                            <Flaticon name="shield-check" type="sr" className="text-blue-600 text-sm" />
                         </div>
                         <div className="min-w-0">
                             <h1 className="text-sm sm:text-base font-bold truncate text-slate-900">{videoName}</h1>
@@ -95,7 +92,7 @@ export default function VideoPage() {
                                     ? 'bg-red-50 text-red-600 border-red-200 animate-pulse-ring'
                                     : 'bg-orange-50 text-orange-600 border-orange-200'
                             }`}>
-                                <Shield className="w-3.5 h-3.5" />
+                                <Flaticon name="shield-exclamation" type="sr" className="text-xs" />
                                 <span>{alerts.length} alert{alerts.length !== 1 ? 's' : ''}</span>
                             </span>
                         )}
@@ -118,7 +115,7 @@ export default function VideoPage() {
                             }}
                             className="cursor-pointer shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl shadow-xs transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                         >
-                            {reportLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" /> : <FileText className="w-3.5 h-3.5 text-slate-400" />}
+                            {reportLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" /> : <Flaticon name="document" className="text-slate-400 text-xs" />}
                             <span>TXT</span>
                         </button>
 
@@ -140,7 +137,7 @@ export default function VideoPage() {
                             }}
                             className="cursor-pointer shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/70 border border-blue-200 rounded-xl shadow-xs transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                         >
-                            {pdfLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                            {pdfLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Flaticon name="cloud-download" className="text-blue-600 text-xs" />}
                             <span>PDF</span>
                         </button>
                     </div>
@@ -155,7 +152,7 @@ export default function VideoPage() {
                         style={{ borderLeft: `4px solid ${riskAccent(summary.risk_level)}` }}
                     >
                         <div className="flex items-center gap-2 mb-3">
-                            <Brain className="w-4 h-4 text-blue-600" />
+                            <Flaticon name="brain" type="sr" className="text-blue-600 text-sm" />
                             <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">AI Forensic Analysis</span>
                             <span className={`text-xs px-2.5 py-0.5 rounded-full border font-bold ml-auto ${riskBadge(summary.risk_level)}`}>
                                 {summary.risk_level.toUpperCase()} RISK
@@ -182,7 +179,7 @@ export default function VideoPage() {
                                     <div className="absolute left-1.5 top-1 bottom-1 w-px bg-slate-200" />
                                     <div className="space-y-3">
                                         {summary.key_moments.map((km, i) => (
-                                            <div key={i} className="flex items-start gap-3 relative">
+                                             <div key={i} className="flex items-start gap-3 relative">
                                                 <div className="absolute -left-[15px] top-1 w-2.5 h-2.5 rounded-full bg-blue-600 border-2 border-white shrink-0 shadow-xs" />
                                                 <span className="text-blue-600 font-mono text-xs shrink-0 pt-px font-semibold">{km.time}</span>
                                                 <span className="text-slate-600 text-xs leading-relaxed">{km.description}</span>
@@ -200,32 +197,39 @@ export default function VideoPage() {
             {videoInfo && ((videoInfo.chunks ?? 0) > 0 || (videoInfo.gpu_time_s ?? 0) > 0) && (
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-2 w-full">
                     <div className="flex flex-wrap gap-2">
-                        {videoInfo.gpu && <StatChip icon={<Server className="w-3 h-3" />} label={videoInfo.gpu} color="blue" />}
-                        {(videoInfo.chunks ?? 0) > 0 && <StatChip icon={<Cpu className="w-3 h-3" />} label={`${videoInfo.chunks} chunks · ${videoInfo.subclips} subclips`} color="gray" />}
+                        {videoInfo.gpu && <StatChip icon={<Flaticon name="chip" type="sr" className="text-blue-600 text-xs" />} label={videoInfo.gpu} color="blue" />}
+                        {(videoInfo.chunks ?? 0) > 0 && <StatChip icon={<Flaticon name="folder" className="text-slate-500 text-xs" />} label={`${videoInfo.chunks} chunks · ${videoInfo.subclips} subclips`} color="gray" />}
                         {(videoInfo.cpu_time_s ?? 0) > 0 && <StatChip icon={null} label={`CPU ${videoInfo.cpu_time_s?.toFixed(0)}s`} color="gray" />}
-                        {(videoInfo.gpu_time_s ?? 0) > 0 && <StatChip icon={<Zap className="w-3 h-3" />} label={`GPU ${videoInfo.gpu_time_s?.toFixed(0)}s`} color="blue" />}
-                        {(videoInfo.processing_time_s ?? 0) > 0 && <StatChip icon={<Clock className="w-3 h-3" />} label={`Total ${videoInfo.processing_time_s?.toFixed(0)}s`} color="gray" />}
+                        {(videoInfo.gpu_time_s ?? 0) > 0 && <StatChip icon={<Flaticon name="bolt" type="sr" className="text-blue-600 text-xs" />} label={`GPU ${videoInfo.gpu_time_s?.toFixed(0)}s`} color="blue" />}
+                        {(videoInfo.processing_time_s ?? 0) > 0 && <StatChip icon={<Flaticon name="clock" className="text-slate-500 text-xs" />} label={`Total ${videoInfo.processing_time_s?.toFixed(0)}s`} color="gray" />}
                     </div>
                 </div>
             )}
 
             {/* Tabs */}
-            <div className="border-b border-slate-200 bg-white sticky top-[61px] z-20">
+            <div className="border-b border-slate-200 bg-white sticky top-[57px] z-20">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 flex gap-1">
                     {(['chat', 'alerts', 'events', 'insights', 'memory'] as const).map(t => (
                         <button
                             key={t}
                             onClick={() => setTab(t)}
-                            className={`cursor-pointer px-4 py-3 text-xs sm:text-sm font-medium transition-all border-b-2 capitalize tracking-normal ${
+                            className={`cursor-pointer px-4 py-3 text-xs sm:text-sm font-medium transition-all border-b-2 capitalize tracking-normal flex items-center gap-1.5 ${
                                 tab === t
                                     ? 'text-blue-600 border-blue-600 font-semibold'
                                     : 'text-slate-500 border-transparent hover:text-slate-800 hover:border-slate-300'
                             }`}
                         >
-                            {t === 'alerts'   ? `Alerts (${alerts.length})` :
-                             t === 'events'   ? `Events (${events.length})` :
-                             t === 'insights' ? 'Insights' :
-                             t === 'memory'   ? 'Memory' : 'Chat & Search'}
+                            {t === 'chat'     && <Flaticon name="comment-alt" className="text-xs" />}
+                            {t === 'alerts'   && <Flaticon name="bell" className="text-xs" />}
+                            {t === 'events'   && <Flaticon name="pulse" className="text-xs" />}
+                            {t === 'insights' && <Flaticon name="stats" className="text-xs" />}
+                            {t === 'memory'   && <Flaticon name="brain" className="text-xs" />}
+                            <span>
+                                {t === 'alerts'   ? `Alerts (${alerts.length})` :
+                                 t === 'events'   ? `Events (${events.length})` :
+                                 t === 'insights' ? 'Insights' :
+                                 t === 'memory'   ? 'Memory' : 'Chat & Search'}
+                            </span>
                         </button>
                     ))}
                 </div>
@@ -241,13 +245,13 @@ export default function VideoPage() {
                 ) : tab === 'chat' ? (
                     <ChatPanel videoId={videoId} />
                 ) : tab === 'alerts' ? (
-                    <CardList items={alerts} emptyIcon={Shield} emptyText="No threat alerts detected" />
+                    <CardList items={alerts} emptyIconName="bell" emptyText="No threat alerts detected" />
                 ) : tab === 'insights' ? (
                     <InsightsPanel videoId={videoId} />
                 ) : tab === 'memory' ? (
                     <MemoryPanel videoId={videoId} />
                 ) : (
-                    <CardList items={events} emptyIcon={Activity} emptyText="No movement events detected" />
+                    <CardList items={events} emptyIconName="pulse" emptyText="No movement events detected" />
                 )}
             </div>
         </div>
@@ -272,9 +276,9 @@ function StatChip({ icon, label, color }: {
 
 // ─── CardList (Events & Alerts) ──────────────────────────────────────────────
 
-function CardList({ items, emptyIcon: Icon, emptyText }: {
+function CardList({ items, emptyIconName, emptyText }: {
     items: EventData[]
-    emptyIcon: React.ComponentType<{ className?: string }>
+    emptyIconName: string
     emptyText: string
 }) {
     const [expanded, setExpanded] = useState<string | null>(null)
@@ -282,7 +286,7 @@ function CardList({ items, emptyIcon: Icon, emptyText }: {
     if (items.length === 0) return (
         <div className="text-center py-24 text-slate-400">
             <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-200">
-                <Icon className="w-7 h-7 opacity-40 text-slate-400" />
+                <Flaticon name={emptyIconName} className="text-2xl text-slate-400" />
             </div>
             <p className="text-sm font-medium">{emptyText}</p>
         </div>
@@ -458,7 +462,7 @@ function ChatPanel({ videoId }: { videoId: string }) {
                             /* AI message */
                             <div key={msg.id} className="flex gap-3.5 animate-fade-up">
                                 <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
-                                    <Brain className="w-4 h-4" />
+                                    <Flaticon name="brain" type="sr" className="text-blue-600 text-xs" />
                                 </div>
                                 <div className="flex-1 min-w-0 pt-0.5">
                                     {msg.loading ? (
@@ -524,7 +528,7 @@ function ChatPanel({ videoId }: { videoId: string }) {
             <div className="bg-white border-t border-slate-200 px-4 py-3.5">
                 <div className="max-w-3xl mx-auto">
                     <div className="border border-slate-200 rounded-xl px-4 py-2.5 flex items-center gap-3 bg-white shadow-xs focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
-                        <Search className="w-4 h-4 text-slate-400 shrink-0" />
+                        <Flaticon name="search" className="text-slate-400 text-xs shrink-0" />
                         <input
                             type="text"
                             value={input}
@@ -541,7 +545,7 @@ function ChatPanel({ videoId }: { videoId: string }) {
                         >
                             {searching
                                 ? <Loader2 className="w-4 h-4 text-white animate-spin" />
-                                : <Send className="w-3.5 h-3.5 text-white" />
+                                : <Flaticon name="paper-plane" type="sr" className="text-white text-xs" />
                             }
                         </button>
                     </div>
@@ -586,7 +590,7 @@ function MemoryPanel({ videoId }: { videoId: string }) {
     return (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 space-y-4">
             <div className="bg-white rounded-2xl p-4.5 flex gap-3.5 border border-slate-200/80 shadow-xs">
-                <Globe className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+                <Flaticon name="search" className="text-blue-600 text-base shrink-0 mt-0.5" />
                 <div>
                     <p className="text-sm font-bold text-slate-900 mb-0.5">Cross-Video Surveillance Intelligence</p>
                     <p className="text-xs text-slate-500 leading-relaxed">
@@ -610,7 +614,7 @@ function MemoryPanel({ videoId }: { videoId: string }) {
                 </div>
 
                 <div className="border border-slate-200 rounded-xl px-4 py-2.5 flex items-center gap-3 bg-white shadow-xs focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
-                    <Search className="w-4 h-4 text-slate-400 shrink-0" />
+                    <Flaticon name="search" className="text-slate-400 text-xs shrink-0" />
                     <input
                         type="text"
                         value={query}
@@ -624,7 +628,7 @@ function MemoryPanel({ videoId }: { videoId: string }) {
                         disabled={loading || !query.trim()}
                         className="cursor-pointer shrink-0 w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 text-white flex items-center justify-center transition-all active:scale-95 disabled:cursor-not-allowed shadow-xs"
                     >
-                        {loading ? <Loader2 className="w-4 h-4 text-white animate-spin" /> : <Search className="w-4 h-4 text-white" />}
+                        {loading ? <Loader2 className="w-4 h-4 text-white animate-spin" /> : <Flaticon name="search" className="text-white text-xs" />}
                     </button>
                 </div>
 
@@ -649,34 +653,37 @@ function MemoryPanel({ videoId }: { videoId: string }) {
                     <span>Searching cross-stream surveillance memories...</span>
                 </div>
             )}
-            {error && <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-xs text-red-600">{error}</div>}
-            {result && !result.configured && (
-                <div className="bg-white rounded-2xl p-6 text-center space-y-2 border border-slate-200/80 shadow-xs">
-                    <Globe className="w-8 h-8 text-slate-400 mx-auto" />
-                    <p className="text-sm text-slate-700 font-semibold">Supermemory API key not configured</p>
-                    <p className="text-xs text-slate-400">Set <code className="bg-slate-100 px-2 py-0.5 rounded text-slate-700 font-mono">SUPERMEMORY_API_KEY</code> in backend/.env</p>
+
+            {error && (
+                <div className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl p-3 flex items-center gap-2">
+                    <Flaticon name="exclamation" className="text-red-500 text-xs shrink-0" />
+                    <span>{error}</span>
                 </div>
             )}
-            {result && result.configured && (
-                <div className="space-y-3.5 animate-fade-up">
-                    <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs" style={{ borderLeft: '4px solid #2563eb' }}>
+
+            {result && !loading && (
+                <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-4 animate-fade-up">
+                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-2">
-                            <Brain className="w-4 h-4 text-blue-600" />
-                            <span className="text-[10px] text-blue-600 uppercase font-semibold tracking-wider">Intelligence Synthesis</span>
+                            <Flaticon name="brain" type="sr" className="text-blue-600 text-xs" />
+                            <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">Forensic Memory Analysis</span>
                         </div>
                         <p className="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{result.answer}</p>
                     </div>
+
                     {result.memories.length > 0 && (
-                        <div className="space-y-2">
-                            <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold px-1">
-                                {result.memories.length} Matched Surveillance Record{result.memories.length !== 1 ? 's' : ''}
-                            </p>
+                        <div className="space-y-2.5">
+                            <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Matched Video Memories ({result.memories.length})</p>
                             {result.memories.map((mem, i) => (
-                                <div key={i} className="bg-white rounded-xl p-3.5 shadow-xs border border-slate-200" style={{ animationDelay: `${i * 60}ms` }}>
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-1.5">
-                                            <FileText className="w-3.5 h-3.5 text-slate-400" />
-                                            <span className="text-[10px] text-slate-500 font-semibold">Record #{i + 1}</span>
+                                <div key={i} className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs space-y-1">
+                                    <div className="flex items-center justify-between text-xs">
+                                        <div className="flex items-center gap-2 font-mono text-slate-500">
+                                            {typeof mem.metadata?.video_name === 'string' && (
+                                                <span className="font-semibold text-slate-700 truncate max-w-xs">{mem.metadata.video_name}</span>
+                                            )}
+                                            {typeof mem.metadata?.start === 'number' && (
+                                                <span>{fmt(mem.metadata.start)}–{fmt(mem.metadata.end as number)}</span>
+                                            )}
                                         </div>
                                         {mem.score > 0 && <span className="text-[10px] text-blue-600 font-semibold">Score: {(mem.score * 100).toFixed(0)}%</span>}
                                     </div>
@@ -711,7 +718,7 @@ function InsightsPanel({ videoId }: { videoId: string }) {
     if (!data) return (
         <div className="text-center py-24 text-slate-400">
             <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-200">
-                <BarChart3 className="w-7 h-7 opacity-40 text-slate-400" />
+                <Flaticon name="stats" className="text-2xl opacity-40 text-slate-400" />
             </div>
             <p className="text-sm">No telemetry insights available</p>
         </div>
@@ -724,14 +731,14 @@ function InsightsPanel({ videoId }: { videoId: string }) {
             {/* Stats bento */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                    { label: 'Total Events', value: data.total_events, icon: Activity, cls: 'bg-blue-50 border-blue-100 text-blue-600' },
-                    { label: 'Threat Alerts', value: data.total_alerts, icon: AlertTriangle, cls: 'bg-red-50 border-red-100 text-red-600' },
-                    { label: 'Event Types', value: Object.keys(data.event_types).length, icon: Tag, cls: 'bg-purple-50 border-purple-100 text-purple-600' },
-                    { label: 'Max People', value: Math.max(...data.timeline.map(t => t.people), 0), icon: Users, cls: 'bg-emerald-50 border-emerald-100 text-emerald-600' },
-                ].map(({ label, value, icon: Icon, cls }) => (
+                    { label: 'Total Events', value: data.total_events, iconName: 'pulse', cls: 'bg-blue-50 border-blue-100 text-blue-600' },
+                    { label: 'Threat Alerts', value: data.total_alerts, iconName: 'bell', cls: 'bg-red-50 border-red-100 text-red-600' },
+                    { label: 'Event Types', value: Object.keys(data.event_types).length, iconName: 'apps', cls: 'bg-purple-50 border-purple-100 text-purple-600' },
+                    { label: 'Max People', value: Math.max(...data.timeline.map(t => t.people), 0), iconName: 'users', cls: 'bg-emerald-50 border-emerald-100 text-emerald-600' },
+                ].map(({ label, value, iconName, cls }) => (
                     <div key={label} className={`rounded-2xl p-4 border animate-fade-up ${cls}`}>
                         <div className="flex items-center gap-2 mb-2">
-                            <Icon className="w-3.5 h-3.5 opacity-80" />
+                            <Flaticon name={iconName} className="text-xs opacity-80" />
                             <span className="text-[10px] uppercase font-bold tracking-wider">{label}</span>
                         </div>
                         <div className="text-2xl font-bold">{value}</div>

@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-    ArrowLeft, Zap, Database, Cpu, Server, Activity,
-    Clock, Layers, GitBranch, Search, RefreshCw, Shield
-} from 'lucide-react'
+import { Flaticon } from '../components/Flaticon'
 import { api, type ModalBenchmark, type VectorAIBenchmark } from '../api'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -65,7 +62,7 @@ function SectionHeader({ icon, title, badge }: { icon: React.ReactNode; title: s
 function ModalSection({ data }: { data: ModalBenchmark | null }) {
     if (!data) return (
         <div className="flex justify-center items-center py-16 text-slate-400 text-xs">
-            <RefreshCw className="w-4 h-4 animate-spin text-blue-600 mr-2" /> Loading compute telemetry…
+            <Flaticon name="refresh" className="text-blue-600 text-xs animate-spin mr-2" /> Loading compute telemetry…
         </div>
     )
 
@@ -74,17 +71,17 @@ function ModalSection({ data }: { data: ModalBenchmark | null }) {
     return (
         <div className="space-y-6">
             <SectionHeader
-                icon={<Zap className="w-5 h-5 text-blue-600" />}
+                icon={<Flaticon name="bolt" type="sr" className="text-lg text-blue-600" />}
                 title="Parallel GPU Compute Telemetry"
                 badge="Modal Cloud · A100 GPU Clusters · Up to 50 Parallel Containers"
             />
 
             {/* Key metrics */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <MetricCard icon={<Zap className="w-3.5 h-3.5" />}    label="Parallel Speedup"    value={hasData ? `${data.speedup_x}×` : '—'} color="blue" sub="vs sequential CPU baseline" />
-                <MetricCard icon={<Server className="w-3.5 h-3.5" />} label="GPU Node"           value={data.gpu_type}                        color="violet" sub={`${data.max_containers} max containers`} />
-                <MetricCard icon={<Layers className="w-3.5 h-3.5" />} label="Sub-clips Done"     value={data.total_subclips_processed}        color="indigo" sub={`${data.total_chunks} chunks`} />
-                <MetricCard icon={<Activity className="w-3.5 h-3.5" />} label="Videos Analyzed"  value={data.total_videos_processed}          color="emerald" sub="surveillance archives" />
+                <MetricCard icon={<Flaticon name="bolt" type="sr" className="text-xs" />}           label="Parallel Speedup"   value={hasData ? `${data.speedup_x}×` : '—'} color="blue" sub="vs sequential CPU baseline" />
+                <MetricCard icon={<Flaticon name="chip" type="sr" className="text-xs" />}           label="GPU Node"           value={data.gpu_type}                        color="violet" sub={`${data.max_containers} max containers`} />
+                <MetricCard icon={<Flaticon name="folder" className="text-xs" />}                   label="Sub-clips Done"     value={data.total_subclips_processed}        color="indigo" sub={`${data.total_chunks} chunks`} />
+                <MetricCard icon={<Flaticon name="video-camera" type="sr" className="text-xs" />}    label="Videos Analyzed"    value={data.total_videos_processed}          color="emerald" sub="surveillance archives" />
             </div>
 
             {/* GPU Model Stack — VRAM Allocation */}
@@ -125,7 +122,10 @@ function ModalSection({ data }: { data: ModalBenchmark | null }) {
                     <div className="space-y-3.5">
                         <div>
                             <div className="flex justify-between text-xs text-slate-700 mb-1.5 font-medium">
-                                <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-blue-600" /> Parallel Inference</span>
+                                <span className="flex items-center gap-1.5">
+                                    <Flaticon name="bolt" type="sr" className="text-xs text-blue-600" />
+                                    Parallel Inference
+                                </span>
                                 <span className="text-blue-600 font-bold font-mono">{data.total_gpu_time_s}s</span>
                             </div>
                             <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
@@ -137,7 +137,10 @@ function ModalSection({ data }: { data: ModalBenchmark | null }) {
                         </div>
                         <div>
                             <div className="flex justify-between text-xs text-slate-400 mb-1.5">
-                                <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> Sequential Baseline (estimated)</span>
+                                <span className="flex items-center gap-1.5">
+                                    <Flaticon name="clock" className="text-xs text-slate-400" />
+                                    Sequential Baseline (estimated)
+                                </span>
                                 <span className="font-mono">{data.estimated_serial_s}s</span>
                             </div>
                             <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
@@ -208,10 +211,10 @@ function ModalSection({ data }: { data: ModalBenchmark | null }) {
                 <p className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Pipeline Architecture</p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                     {[
-                        { icon: <GitBranch className="w-3.5 h-3.5 text-slate-500" />, label: 'CPU Motion Phase', value: 'chunk_and_score()' },
-                        { icon: <Zap className="w-3.5 h-3.5 text-blue-600" />,         label: 'GPU Inference Phase', value: 'FeatureExtractor()' },
-                        { icon: <Server className="w-3.5 h-3.5 text-purple-600" />,    label: 'Object Detection',  value: 'YOLO11 + CLIP ViT-L' },
-                        { icon: <Layers className="w-3.5 h-3.5 text-emerald-600" />,   label: 'Forensic Synthesis', value: 'Gemini 3.5 Multimodal' },
+                        { icon: <Flaticon name="code-branch" className="text-xs text-slate-500" />,  label: 'CPU Motion Phase',   value: 'chunk_and_score()' },
+                        { icon: <Flaticon name="bolt" type="sr" className="text-xs text-blue-600" />,      label: 'GPU Inference Phase', value: 'FeatureExtractor()' },
+                        { icon: <Flaticon name="chip" type="sr" className="text-xs text-purple-600" />,    label: 'Object Detection',    value: 'YOLO11 + CLIP ViT-L' },
+                        { icon: <Flaticon name="brain" type="sr" className="text-xs text-emerald-600" />,  label: 'Forensic Synthesis',  value: 'Gemini 3.5 Multimodal' },
                     ].map(({ icon, label, value }) => (
                         <div key={label} className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
                             <div className="flex items-center gap-1.5 text-slate-500">
@@ -238,7 +241,7 @@ function VectorAISection({
 }) {
     if (!data) return (
         <div className="flex justify-center items-center py-16 text-slate-400 text-xs">
-            <RefreshCw className="w-4 h-4 animate-spin text-blue-600 mr-2" /> Running vector similarity test…
+            <Flaticon name="refresh" className="text-blue-600 text-xs animate-spin mr-2" /> Running vector similarity test…
         </div>
     )
 
@@ -249,7 +252,7 @@ function VectorAISection({
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <SectionHeader
-                    icon={<Database className="w-5 h-5 text-blue-600" />}
+                    icon={<Flaticon name="database" type="sr" className="text-lg text-blue-600" />}
                     title="Vector Similarity & Search Telemetry"
                     badge="CLIP 768-dim Embeddings · COSINE Distance Metric · gRPC"
                 />
@@ -258,17 +261,17 @@ function VectorAISection({
                     disabled={refreshing}
                     className="cursor-pointer flex items-center gap-1.5 text-xs text-slate-700 hover:text-slate-900 px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-xs active:scale-95 font-medium"
                 >
-                    <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-blue-600' : ''}`} />
+                    <Flaticon name="refresh" className={`text-xs ${refreshing ? 'animate-spin text-blue-600' : 'text-slate-500'}`} />
                     <span>{refreshing ? 'Benchmarking…' : 'Re-run Test'}</span>
                 </button>
             </div>
 
             {/* Key metrics */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <MetricCard icon={<Search className="w-3.5 h-3.5" />}   label="Hybrid Search"    value={data.hybrid_search_latency_ms} unit="ms" color="blue"    sub="vector + text query" />
-                <MetricCard icon={<Cpu className="w-3.5 h-3.5" />}      label="CLIP Text Encode" value={data.clip_encode_latency_ms}   unit="ms" color="indigo"  sub="text → 768-dim vector" />
-                <MetricCard icon={<Database className="w-3.5 h-3.5" />} label="Indexed Vectors"  value={data.total_vectors}                      color="violet"  sub="CLIP video embeddings" />
-                <MetricCard icon={<Layers className="w-3.5 h-3.5" />}   label="Dimensions"       value={data.dimensions}                         color="emerald" sub={data.distance_metric} />
+                <MetricCard icon={<Flaticon name="search" className="text-xs" />}                     label="Hybrid Search"    value={data.hybrid_search_latency_ms} unit="ms" color="blue"    sub="vector + text query" />
+                <MetricCard icon={<Flaticon name="chip" type="sr" className="text-xs" />}             label="CLIP Text Encode" value={data.clip_encode_latency_ms}   unit="ms" color="indigo"  sub="text → 768-dim vector" />
+                <MetricCard icon={<Flaticon name="database" type="sr" className="text-xs" />}         label="Indexed Vectors"  value={data.total_vectors}                      color="violet"  sub="CLIP video embeddings" />
+                <MetricCard icon={<Flaticon name="apps" className="text-xs" />}                      label="Dimensions"       value={data.dimensions}                         color="emerald" sub={data.distance_metric} />
             </div>
 
             {/* Latency gauge */}
@@ -347,16 +350,16 @@ export default function BenchmarkPage() {
         <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
             {/* Header */}
             <header className="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-xs">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex items-center gap-3">
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
                     <button
                         onClick={() => navigate('/')}
                         className="cursor-pointer p-2 hover:bg-slate-100 rounded-xl transition-all text-slate-500 hover:text-slate-800 border border-slate-200 shadow-xs"
                     >
-                        <ArrowLeft className="w-4 h-4" />
+                        <Flaticon name="angle-small-left" className="text-base" />
                     </button>
                     <div className="flex items-center gap-3 flex-1">
                         <div className="w-9 h-9 rounded-xl border border-blue-200 bg-white flex items-center justify-center text-blue-600 shadow-xs shrink-0">
-                            <Shield className="w-5 h-5 stroke-[1.8]" />
+                            <Flaticon name="shield-check" type="sr" className="text-blue-600 text-sm" />
                         </div>
                         <div>
                             <h1 className="text-base font-bold text-slate-900 tracking-tight">Compute & Retrieval Benchmarks</h1>

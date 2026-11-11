@@ -1,12 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-    Shield, Upload, Video, Activity, Loader2,
-    ChevronRight, Plus, X, CheckCircle2, AlertCircle, BarChart3,
-    Brain, Send, Search, RotateCcw, Bell,
-    Folder, Cpu, Settings, FileText, ArrowDownToLine, Menu,
-    Check, AlertTriangle, Play, Download
-} from 'lucide-react'
+import { Loader2, ChevronRight, X } from 'lucide-react'
+import { Flaticon } from '../components/Flaticon'
 import { api, type VideoInfo, type MemoryQueryResult } from '../api'
 
 export default function HomePage() {
@@ -47,7 +42,7 @@ export default function HomePage() {
                             className="cursor-pointer md:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all"
                             aria-label="Toggle Navigation"
                         >
-                            <Menu className="w-5 h-5" />
+                            <Flaticon name="menu-burger" className="text-base" />
                         </button>
 
                         <div
@@ -55,11 +50,7 @@ export default function HomePage() {
                             className="cursor-pointer flex items-center gap-3 group"
                         >
                             <div className="w-9 h-9 rounded-xl border border-blue-200/90 bg-white flex items-center justify-center shadow-xs group-hover:border-blue-400 transition-colors">
-                                <svg className="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                                    <ellipse cx="12" cy="11.5" rx="3.5" ry="2" />
-                                    <circle cx="12" cy="11.5" r="1" fill="currentColor" />
-                                </svg>
+                                <Flaticon name="shield-check" type="sr" className="text-blue-600 text-base" />
                             </div>
                             <div>
                                 <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight group-hover:text-blue-600 transition-colors">
@@ -78,14 +69,14 @@ export default function HomePage() {
                             onClick={() => navigate('/benchmarks')}
                             className="cursor-pointer flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl shadow-xs transition-all hover:border-slate-300"
                         >
-                            <BarChart3 className="w-3.5 h-3.5 text-slate-500" />
+                            <Flaticon name="stats" className="text-slate-500 text-xs" />
                             <span className="hidden sm:inline">Benchmarks</span>
                         </button>
                         <button
                             onClick={() => setShowUpload(true)}
                             className="cursor-pointer flex items-center gap-1.5 px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all active:scale-95"
                         >
-                            <Plus className="w-4 h-4 stroke-[2.5]" />
+                            <Flaticon name="plus" className="text-white text-xs" />
                             <span>Upload Video</span>
                         </button>
                     </div>
@@ -219,7 +210,10 @@ function SidebarNav({ activeNav, onSelect, totalAlerts, totalEvents, videoCount 
                     }`}
                 >
                     <div className="flex items-center gap-2.5">
-                        <ArrowDownToLine className={`w-4 h-4 ${activeNav === 'dashboard' ? 'text-blue-600' : 'text-slate-400'}`} />
+                        <Flaticon
+                            name="apps"
+                            className={`text-sm ${activeNav === 'dashboard' ? 'text-blue-600' : 'text-slate-400'}`}
+                        />
                         <span>Dashboard</span>
                     </div>
                 </button>
@@ -232,13 +226,13 @@ function SidebarNav({ activeNav, onSelect, totalAlerts, totalEvents, videoCount 
                 </p>
                 <nav className="space-y-1">
                     <SidebarItem
-                        icon={Search}
+                        iconName="search"
                         label="Cross-Video Intelligence"
                         active={activeNav === 'intelligence'}
                         onClick={() => onSelect('intelligence')}
                     />
                     <SidebarItem
-                        icon={Bell}
+                        iconName="bell"
                         label="Alerts"
                         active={activeNav === 'alerts'}
                         badge={totalAlerts > 0 ? totalAlerts : undefined}
@@ -246,7 +240,7 @@ function SidebarNav({ activeNav, onSelect, totalAlerts, totalEvents, videoCount 
                         onClick={() => onSelect('alerts')}
                     />
                     <SidebarItem
-                        icon={Activity}
+                        iconName="pulse"
                         label="Events"
                         active={activeNav === 'events'}
                         badge={totalEvents > 0 ? totalEvents : undefined}
@@ -254,7 +248,7 @@ function SidebarNav({ activeNav, onSelect, totalAlerts, totalEvents, videoCount 
                         onClick={() => onSelect('events')}
                     />
                     <SidebarItem
-                        icon={Folder}
+                        iconName="folder"
                         label="Feeds & Archives"
                         active={activeNav === 'feeds'}
                         badge={videoCount > 0 ? videoCount : undefined}
@@ -271,19 +265,19 @@ function SidebarNav({ activeNav, onSelect, totalAlerts, totalEvents, videoCount 
                 </p>
                 <nav className="space-y-1">
                     <SidebarItem
-                        icon={Cpu}
+                        iconName="chip"
                         label="Compute & Status"
                         active={activeNav === 'compute'}
                         onClick={() => onSelect('compute')}
                     />
                     <SidebarItem
-                        icon={Settings}
+                        iconName="settings"
                         label="Settings"
                         active={activeNav === 'settings'}
                         onClick={() => onSelect('settings')}
                     />
                     <SidebarItem
-                        icon={FileText}
+                        iconName="document"
                         label="Activity Log"
                         active={activeNav === 'logs'}
                         onClick={() => onSelect('logs')}
@@ -294,8 +288,8 @@ function SidebarNav({ activeNav, onSelect, totalAlerts, totalEvents, videoCount 
     )
 }
 
-function SidebarItem({ icon: Icon, label, active, badge, badgeColor = 'slate', onClick }: {
-    icon: React.ComponentType<{ className?: string }>
+function SidebarItem({ iconName, label, active, badge, badgeColor = 'slate', onClick }: {
+    iconName: string
     label: string
     active?: boolean
     badge?: number | string
@@ -318,7 +312,10 @@ function SidebarItem({ icon: Icon, label, active, badge, badgeColor = 'slate', o
             }`}
         >
             <div className="flex items-center gap-2.5 truncate">
-                <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-blue-600' : 'text-slate-400'}`} />
+                <Flaticon
+                    name={iconName}
+                    className={`text-sm shrink-0 ${active ? 'text-blue-600' : 'text-slate-400'}`}
+                />
                 <span className="truncate">{label}</span>
             </div>
             {badge != null && (
@@ -341,7 +338,7 @@ function SystemStatusWidget() {
             <p className="text-[11px] text-slate-400">All systems running smoothly</p>
             <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[10px] text-slate-500">
                 <span className="flex items-center gap-1">
-                    <Cpu className="w-3 h-3 text-slate-400" />
+                    <Flaticon name="chip" className="text-slate-400 text-xs" />
                     GPU T4 Active
                 </span>
                 <span className="text-emerald-600 font-medium">99.9%</span>
@@ -350,7 +347,7 @@ function SystemStatusWidget() {
     )
 }
 
-// ─── 1. Dashboard View (Matches Reference Image 1-to-1) ────────────────────────
+// ─── 1. Dashboard View ────────────────────────────────────────────────────────
 
 function DashboardView({ videos, loading, totalEvents, totalAlerts, totalTime, onUpload, onSelectVideo }: {
     videos: VideoInfo[]
@@ -371,28 +368,28 @@ function DashboardView({ videos, loading, totalEvents, totalAlerts, totalTime, o
             {/* Card 2: 4 Telemetry Metric Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
-                    icon={Video}
+                    flaticon="video-camera"
                     label="Videos Ingested"
                     value={videos.length}
                     sub="Analyzed streams"
                     color="blue"
                 />
                 <StatCard
-                    icon={Activity}
+                    flaticon="pulse"
                     label="Total Events"
                     value={totalEvents}
                     sub="CV tracklets classified"
                     color="emerald"
                 />
                 <StatCard
-                    icon={Shield}
+                    flaticon="shield"
                     label="Total Alerts"
                     value={totalAlerts}
                     sub="Threat windows flagged"
                     color="orange"
                 />
                 <StatCard
-                    icon={Cpu}
+                    flaticon="chip"
                     label="Compute Time"
                     value={`${totalTime.toFixed(0)}s`}
                     sub="GPU inference active"
@@ -404,7 +401,7 @@ function DashboardView({ videos, loading, totalEvents, totalAlerts, totalTime, o
             <div id="feeds-section" className="space-y-3">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <Search className="w-4 h-4 text-blue-600" />
+                        <Flaticon name="search" className="text-blue-600 text-sm" />
                         <h2 className="text-sm font-bold text-slate-900">Surveillance Feeds & Archives</h2>
                     </div>
                     {videos.length > 0 && (
@@ -420,10 +417,10 @@ function DashboardView({ videos, loading, totalEvents, totalAlerts, totalTime, o
                         <p className="text-xs text-slate-400">Loading footage records...</p>
                     </div>
                 ) : videos.length === 0 ? (
-                    /* Empty State Matching Reference Image */
+                    /* Empty State Matching Reference Image with Professional Flaticon */
                     <div className="bg-white rounded-2xl p-12 sm:p-16 border border-slate-200/80 shadow-xs text-center">
                         <div className="w-16 h-16 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4">
-                            <Video className="w-7 h-7 text-blue-600 stroke-[1.8]" />
+                            <Flaticon name="video-camera" type="sr" className="text-2xl text-blue-600" />
                         </div>
                         <h3 className="text-base font-bold text-slate-900 mb-1.5">
                             No surveillance footage ingested
@@ -433,9 +430,10 @@ function DashboardView({ videos, loading, totalEvents, totalAlerts, totalTime, o
                         </p>
                         <button
                             onClick={onUpload}
-                            className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-5 py-2.5 rounded-xl shadow-xs active:scale-95 transition-all"
+                            className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-5 py-2.5 rounded-xl shadow-xs active:scale-95 transition-all inline-flex items-center gap-2"
                         >
-                            Upload your first video
+                            <Flaticon name="cloud-upload" type="sr" className="text-xs text-white" />
+                            <span>Upload your first video</span>
                         </button>
                         <p className="text-xs text-slate-400 mt-4">
                             Supports MP4, MOV · Max file size 5GB
@@ -476,7 +474,7 @@ function IntelligenceView({ videos }: { videos: VideoInfo[] }) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs">
                     <div className="flex items-center gap-2 mb-2">
-                        <Brain className="w-4 h-4 text-blue-600" />
+                        <Flaticon name="brain" type="sr" className="text-blue-600 text-base" />
                         <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Semantic Memory</h3>
                     </div>
                     <p className="text-2xl font-bold text-slate-900">2,410</p>
@@ -485,7 +483,7 @@ function IntelligenceView({ videos }: { videos: VideoInfo[] }) {
 
                 <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs">
                     <div className="flex items-center gap-2 mb-2">
-                        <Search className="w-4 h-4 text-emerald-600" />
+                        <Flaticon name="search" className="text-emerald-600 text-base" />
                         <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Search Latency</h3>
                     </div>
                     <p className="text-2xl font-bold text-slate-900">42ms</p>
@@ -494,7 +492,7 @@ function IntelligenceView({ videos }: { videos: VideoInfo[] }) {
 
                 <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs">
                     <div className="flex items-center gap-2 mb-2">
-                        <Shield className="w-4 h-4 text-purple-600" />
+                        <Flaticon name="shield" type="sr" className="text-purple-600 text-base" />
                         <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Indexed Cameras</h3>
                     </div>
                     <p className="text-2xl font-bold text-slate-900">{Math.max(videos.length, 1)}</p>
@@ -550,7 +548,7 @@ function AlertsView({ videos, onSelectVideo }: { videos: VideoInfo[]; onSelectVi
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2">
-                        <Bell className="w-5 h-5 text-red-600" />
+                        <Flaticon name="bell" type="sr" className="text-red-600 text-lg" />
                         <h2 className="text-lg font-bold text-slate-900">Security Threat Alerts Center</h2>
                     </div>
                     <p className="text-xs text-slate-500 mt-1">
@@ -584,7 +582,7 @@ function AlertsView({ videos, onSelectVideo }: { videos: VideoInfo[]; onSelectVi
                                 alert.stage === 'B' ? 'bg-orange-50 text-orange-600 border border-orange-200' :
                                 'bg-amber-50 text-amber-600 border border-amber-200'
                             }`}>
-                                <AlertTriangle className="w-5 h-5" />
+                                <Flaticon name="shield-exclamation" type="sr" className="text-lg" />
                             </div>
                             <div>
                                 <div className="flex items-center gap-2">
@@ -611,7 +609,7 @@ function AlertsView({ videos, onSelectVideo }: { videos: VideoInfo[]; onSelectVi
                                 onClick={() => onSelectVideo(alert.videoId)}
                                 className="cursor-pointer shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 transition-all self-end sm:self-center"
                             >
-                                <Play className="w-3.5 h-3.5" />
+                                <Flaticon name="play" type="sr" className="text-xs" />
                                 <span>Inspect Footage</span>
                             </button>
                         ) : (
@@ -638,7 +636,7 @@ function EventsView({ videos, onSelectVideo }: { videos: VideoInfo[]; onSelectVi
         <div className="space-y-6 animate-fade-in">
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs">
                 <div className="flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-emerald-600" />
+                    <Flaticon name="pulse" className="text-emerald-600 text-lg" />
                     <h2 className="text-lg font-bold text-slate-900">Computer Vision Events Stream</h2>
                 </div>
                 <p className="text-xs text-slate-500 mt-1">
@@ -656,7 +654,7 @@ function EventsView({ videos, onSelectVideo }: { videos: VideoInfo[]; onSelectVi
                         <div key={ev.id} className="p-4 sm:px-6 flex items-center justify-between hover:bg-slate-50/80 transition-colors">
                             <div className="flex items-center gap-3">
                                 <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
-                                    <Activity className="w-4 h-4" />
+                                    <Flaticon name="pulse" className="text-sm" />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-2">
@@ -701,7 +699,7 @@ function FeedsView({ videos, loading, onUpload, onSelectVideo }: {
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2">
-                        <Folder className="w-5 h-5 text-blue-600" />
+                        <Flaticon name="folder" type="sr" className="text-blue-600 text-lg" />
                         <h2 className="text-lg font-bold text-slate-900">Surveillance Feeds & Archives</h2>
                     </div>
                     <p className="text-xs text-slate-500 mt-1">
@@ -712,7 +710,7 @@ function FeedsView({ videos, loading, onUpload, onSelectVideo }: {
                     onClick={onUpload}
                     className="cursor-pointer flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs transition-all active:scale-95"
                 >
-                    <Plus className="w-4 h-4 stroke-[2.5]" />
+                    <Flaticon name="plus" className="text-white text-xs" />
                     <span>Ingest New Feed</span>
                 </button>
             </div>
@@ -725,7 +723,7 @@ function FeedsView({ videos, loading, onUpload, onSelectVideo }: {
             ) : videos.length === 0 ? (
                 <div className="bg-white rounded-2xl p-12 sm:p-16 border border-slate-200/80 shadow-xs text-center">
                     <div className="w-16 h-16 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4">
-                        <Video className="w-7 h-7 text-blue-600 stroke-[1.8]" />
+                        <Flaticon name="video-camera" type="sr" className="text-2xl text-blue-600" />
                     </div>
                     <h3 className="text-base font-bold text-slate-900 mb-1.5">
                         No surveillance footage ingested
@@ -735,9 +733,10 @@ function FeedsView({ videos, loading, onUpload, onSelectVideo }: {
                     </p>
                     <button
                         onClick={onUpload}
-                        className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-5 py-2.5 rounded-xl shadow-xs active:scale-95 transition-all"
+                        className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-5 py-2.5 rounded-xl shadow-xs active:scale-95 transition-all inline-flex items-center gap-2"
                     >
-                        Upload your first video
+                        <Flaticon name="cloud-upload" type="sr" className="text-xs text-white" />
+                        <span>Upload your first video</span>
                     </button>
                     <p className="text-xs text-slate-400 mt-4">
                         Supports MP4, MOV · Max file size 5GB
@@ -755,7 +754,7 @@ function FeedsView({ videos, loading, onUpload, onSelectVideo }: {
                                 <div className="flex items-center justify-between mb-3">
                                     <div className="flex items-center gap-2">
                                         <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                                            <Video className="w-4 h-4" />
+                                            <Flaticon name="video-camera" type="sr" className="text-sm" />
                                         </div>
                                         <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">CH-0{i+1}</span>
                                     </div>
@@ -789,7 +788,7 @@ function ComputeView({ totalTime, onGoBenchmarks }: { totalTime: number; onGoBen
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2">
-                        <Cpu className="w-5 h-5 text-purple-600" />
+                        <Flaticon name="chip" type="sr" className="text-purple-600 text-lg" />
                         <h2 className="text-lg font-bold text-slate-900">Compute & Infrastructure Status</h2>
                     </div>
                     <p className="text-xs text-slate-500 mt-1">
@@ -800,7 +799,7 @@ function ComputeView({ totalTime, onGoBenchmarks }: { totalTime: number; onGoBen
                     onClick={onGoBenchmarks}
                     className="cursor-pointer flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl border border-slate-200 transition-all"
                 >
-                    <BarChart3 className="w-4 h-4 text-slate-500" />
+                    <Flaticon name="stats" className="text-slate-500 text-xs" />
                     <span>View Benchmark Suite</span>
                 </button>
             </div>
@@ -863,7 +862,7 @@ function SettingsView() {
         <div className="space-y-6 animate-fade-in">
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs">
                 <div className="flex items-center gap-2">
-                    <Settings className="w-5 h-5 text-slate-700" />
+                    <Flaticon name="settings" className="text-slate-700 text-lg" />
                     <h2 className="text-lg font-bold text-slate-900">System & Detection Settings</h2>
                 </div>
                 <p className="text-xs text-slate-500 mt-1">
@@ -931,7 +930,7 @@ function SettingsView() {
                     </button>
                     {saved && (
                         <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 animate-fade-in">
-                            <Check className="w-4 h-4" />
+                            <Flaticon name="badge-check" type="sr" className="text-emerald-500 text-base" />
                             Settings saved successfully
                         </span>
                     )}
@@ -957,7 +956,7 @@ function ActivityLogView({ videos }: { videos: VideoInfo[] }) {
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-slate-700" />
+                        <Flaticon name="document" className="text-slate-700 text-lg" />
                         <h2 className="text-lg font-bold text-slate-900">Security & Activity Audit Log</h2>
                     </div>
                     <p className="text-xs text-slate-500 mt-1">
@@ -968,7 +967,7 @@ function ActivityLogView({ videos }: { videos: VideoInfo[] }) {
                     onClick={() => alert('Audit log exported to clipboard')}
                     className="cursor-pointer flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 transition-all self-start sm:self-center"
                 >
-                    <Download className="w-3.5 h-3.5" />
+                    <Flaticon name="cloud-download" className="text-slate-600 text-xs" />
                     <span>Export Audit Trail</span>
                 </button>
             </div>
@@ -995,7 +994,7 @@ function ActivityLogView({ videos }: { videos: VideoInfo[] }) {
     )
 }
 
-// ─── GlobalMemoryChat (Preserved) ─────────────────────────────────────────────
+// ─── GlobalMemoryChat ─────────────────────────────────────────────────────────
 
 function GlobalMemoryChat() {
     const [query, setQuery]   = useState('')
@@ -1029,10 +1028,7 @@ function GlobalMemoryChat() {
             {/* Header */}
             <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl border border-blue-200/90 bg-white flex items-center justify-center text-blue-600 shrink-0 shadow-xs">
-                    <svg className="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="8" strokeDasharray="3 3" />
-                        <circle cx="12" cy="12" r="3" />
-                    </svg>
+                    <Flaticon name="brain" type="sr" className="text-blue-600 text-lg" />
                 </div>
                 <div>
                     <h2 className="text-base font-bold text-slate-900">
@@ -1046,7 +1042,7 @@ function GlobalMemoryChat() {
 
             {/* Search Input Bar */}
             <div className="border border-slate-200 rounded-xl px-4 py-2.5 flex items-center gap-3 bg-white shadow-xs focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
-                <Search className="w-4 h-4 text-slate-400 shrink-0" />
+                <Flaticon name="search" className="text-slate-400 text-sm shrink-0" />
                 <input
                     ref={inputRef}
                     type="text"
@@ -1062,7 +1058,7 @@ function GlobalMemoryChat() {
                     className="cursor-pointer shrink-0 w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:cursor-not-allowed text-white flex items-center justify-center shadow-xs transition-all active:scale-95"
                     title="Send Query"
                 >
-                    {loading ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : <Send className="w-3.5 h-3.5 text-white" />}
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : <Flaticon name="paper-plane" type="sr" className="text-white text-xs" />}
                 </button>
             </div>
 
@@ -1074,7 +1070,7 @@ function GlobalMemoryChat() {
                         onClick={() => ask(s)}
                         className="cursor-pointer flex items-center gap-1.5 text-xs text-slate-600 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 shadow-xs transition-all hover:border-slate-300"
                     >
-                        <Search className="w-3 h-3 text-slate-400" />
+                        <Flaticon name="search" className="text-slate-400 text-xs" />
                         <span>{s}</span>
                     </button>
                 ))}
@@ -1083,13 +1079,13 @@ function GlobalMemoryChat() {
                     className="cursor-pointer ml-auto text-slate-400 hover:text-slate-600 p-1.5 hover:bg-slate-100 rounded-lg transition-colors"
                     title="Clear query"
                 >
-                    <RotateCcw className="w-4 h-4" />
+                    <Flaticon name="refresh" className="text-slate-400 text-sm" />
                 </button>
             </div>
 
             {error && (
                 <div className="mt-3 flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 px-3.5 py-2.5 rounded-xl">
-                    <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+                    <Flaticon name="exclamation" className="text-red-500 text-sm shrink-0" />
                     <span>{error}</span>
                 </div>
             )}
@@ -1099,7 +1095,7 @@ function GlobalMemoryChat() {
                 <div className="mt-4 pt-4 border-t border-slate-100 space-y-3 animate-fade-up">
                     <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
                         <div className="flex items-center gap-1.5 mb-1.5">
-                            <Brain className="w-3.5 h-3.5 text-blue-600" />
+                            <Flaticon name="brain" type="sr" className="text-blue-600 text-xs" />
                             <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">AI Forensic Correlation</span>
                         </div>
                         <p className="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
@@ -1134,8 +1130,8 @@ function GlobalMemoryChat() {
 
 // ─── StatCard ─────────────────────────────────────────────────────────────────
 
-function StatCard({ icon: Icon, label, value, sub, color }: {
-    icon: React.ComponentType<{ className?: string }>
+function StatCard({ flaticon, label, value, sub, color }: {
+    flaticon: string
     label: string
     value: string | number
     sub: string
@@ -1153,7 +1149,7 @@ function StatCard({ icon: Icon, label, value, sub, color }: {
         <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
             <div className="flex items-center gap-2.5">
                 <div className={`w-8 h-8 rounded-lg ${c.bg} border ${c.border} flex items-center justify-center shrink-0`}>
-                    <Icon className={`w-4 h-4 ${c.icon}`} />
+                    <Flaticon name={flaticon} type="sr" className={`text-sm ${c.icon}`} />
                 </div>
                 <span className="text-xs font-semibold text-slate-800">{label}</span>
             </div>
@@ -1179,7 +1175,7 @@ function VideoCard({ video: v, index, onClick }: { video: VideoInfo; index: numb
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5 min-w-0">
                     <div className="w-11 h-11 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center text-blue-600 shrink-0">
-                        <Video className="w-5 h-5 text-blue-600" />
+                        <Flaticon name="video-camera" type="sr" className="text-lg text-blue-600" />
                     </div>
                     <div className="min-w-0">
                         <p className="text-sm font-semibold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
@@ -1206,7 +1202,7 @@ function VideoCard({ video: v, index, onClick }: { video: VideoInfo; index: numb
                                 ? 'bg-red-50 text-red-600 border-red-200'
                                 : 'bg-orange-50 text-orange-600 border-orange-200'
                         }`}>
-                            <Shield className="w-3.5 h-3.5" />
+                            <Flaticon name="shield-exclamation" type="sr" className="text-xs" />
                             <span>{v.total_alerts} alert{v.total_alerts !== 1 ? 's' : ''}</span>
                         </span>
                     ) : (
@@ -1291,7 +1287,7 @@ function UploadModal({ onClose, onDone }: { onClose: () => void; onDone: () => v
 
                 {done ? (
                     <div className="text-center py-8 space-y-2">
-                        <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto animate-bounce" />
+                        <Flaticon name="badge-check" type="sr" className="text-4xl text-emerald-500 mx-auto animate-bounce" />
                         <p className="text-sm font-semibold text-slate-800">Processing Complete!</p>
                         <p className="text-xs text-slate-400">Footage ingested into surveillance database.</p>
                     </div>
@@ -1335,13 +1331,13 @@ function UploadModal({ onClose, onDone }: { onClose: () => void; onDone: () => v
                             />
                             {file ? (
                                 <div className="space-y-1">
-                                    <Video className="w-8 h-8 text-blue-600 mx-auto" />
+                                    <Flaticon name="video-camera" type="sr" className="text-3xl text-blue-600 mx-auto" />
                                     <p className="text-xs font-semibold text-slate-800 truncate max-w-xs mx-auto">{file.name}</p>
                                     <p className="text-[11px] text-slate-400">{(file.size / (1024 * 1024)).toFixed(1)} MB</p>
                                 </div>
                             ) : (
                                 <div className="space-y-2">
-                                    <Upload className="w-8 h-8 text-slate-400 mx-auto" />
+                                    <Flaticon name="cloud-upload" className="text-3xl text-slate-400 mx-auto" />
                                     <p className="text-xs font-semibold text-slate-700">Drag & drop footage here</p>
                                     <p className="text-[11px] text-slate-400">or click to browse files</p>
                                 </div>
@@ -1350,7 +1346,7 @@ function UploadModal({ onClose, onDone }: { onClose: () => void; onDone: () => v
 
                         {error && (
                             <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-xl">
-                                <AlertCircle className="w-4 h-4 shrink-0" />
+                                <Flaticon name="exclamation" className="text-red-500 text-sm shrink-0" />
                                 <span>{error}</span>
                             </div>
                         )}
