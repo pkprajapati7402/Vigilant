@@ -10,31 +10,31 @@ import { api, ev, type EventData, type VideoSummary, type InsightsData, type Vid
 function fmt(s: number) { const m = Math.floor(s / 60); return `${m}:${Math.floor(s % 60).toString().padStart(2, '0')}` }
 
 function stageColor(s: string) {
-    if (s === 'C') return 'bg-red-50 text-red-600 border-red-200'
-    if (s === 'B') return 'bg-orange-50 text-orange-600 border-orange-200'
-    if (s === 'A') return 'bg-amber-50 text-amber-600 border-amber-200'
-    return 'bg-gray-100 text-gray-500 border-gray-200'
+    if (s === 'C') return 'bg-red-500/15 text-red-400 border-red-500/40'
+    if (s === 'B') return 'bg-orange-500/15 text-orange-400 border-orange-500/40'
+    if (s === 'A') return 'bg-amber-500/15 text-amber-400 border-amber-500/40'
+    return 'bg-zinc-800 text-zinc-400 border-white/10'
 }
 function stageGlow(s: string) {
-    if (s === 'C') return 'shadow-md animate-pulse-ring'
-    if (s === 'B') return 'shadow-sm'
+    if (s === 'C') return 'shadow-lg shadow-red-500/20 animate-pulse-ring'
+    if (s === 'B') return 'shadow-md shadow-orange-500/10'
     return ''
 }
 function labelColor(l: string) {
-    if (l.includes('altercation') || l.includes('weapon') || l.includes('assault')) return 'text-red-600'
-    if (l.includes('confrontation') || l.includes('aggressive') || l.includes('fight')) return 'text-orange-600'
-    if (l.includes('trespassing') || l.includes('shoplifting') || l.includes('theft') || l.includes('steal')) return 'text-amber-600'
-    return 'text-gray-800'
+    if (l.includes('altercation') || l.includes('weapon') || l.includes('assault')) return 'text-red-400'
+    if (l.includes('confrontation') || l.includes('aggressive') || l.includes('fight')) return 'text-orange-400'
+    if (l.includes('trespassing') || l.includes('shoplifting') || l.includes('theft') || l.includes('steal') || l.includes('creep')) return 'text-amber-400'
+    return 'text-zinc-200'
 }
 function riskBadge(r: string) {
-    if (r === 'high')   return 'bg-red-50 text-red-600 border-red-200'
-    if (r === 'medium') return 'bg-amber-50 text-amber-600 border-amber-200'
-    return 'bg-green-50 text-green-600 border-green-200'
+    if (r === 'high')   return 'bg-red-500/15 text-red-400 border-red-500/40 glow-red'
+    if (r === 'medium') return 'bg-amber-500/15 text-amber-400 border-amber-500/40 glow-amber'
+    return 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40 glow-emerald'
 }
 function riskAccent(r: string) {
     if (r === 'high')   return '#ef4444'
     if (r === 'medium') return '#f59e0b'
-    return '#22c55e'
+    return '#10b981'
 }
 
 export default function VideoPage() {
@@ -65,126 +65,141 @@ export default function VideoPage() {
     const videoName = events[0]?.video_source || alerts[0]?.video_source || videoId
 
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
-            {/* Subtle ambient tint */}
+        <div className="min-h-screen bg-[#080c14] text-slate-100 flex flex-col relative overflow-x-hidden selection:bg-amber-500/30 selection:text-amber-200">
+            {/* Tactical Grid & Ambient glow */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden bg-tactical-grid opacity-30" />
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute -top-20 right-1/4 w-96 h-96 bg-indigo-200/30 rounded-full blur-3xl" />
-                {summary?.risk_level === 'high' && (
-                    <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-red-200/25 rounded-full blur-3xl" />
+                <div className="absolute -top-32 right-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-3xl" />
+                {summary?.risk_level === 'high' ? (
+                    <div className="absolute bottom-1/3 left-1/4 w-[400px] h-[400px] bg-red-600/10 rounded-full blur-3xl" />
+                ) : (
+                    <div className="absolute bottom-1/3 left-1/4 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-3xl" />
                 )}
             </div>
 
             {/* Header */}
-            <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-gray-200 shadow-sm">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
-                    <button
-                        onClick={() => navigate('/')}
-                        className="cursor-pointer p-1.5 hover:bg-gray-100 rounded-lg transition-all text-gray-500 hover:text-gray-800"
-                    >
-                        <ArrowLeft className="w-5 h-5" />
-                    </button>
-                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+            <header className="sticky top-0 z-30 bg-[#080c14]/85 backdrop-blur-2xl border-b border-white/[0.08] shadow-2xl shadow-black/40">
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <button
+                            onClick={() => navigate('/')}
+                            className="cursor-pointer p-2 hover:bg-zinc-800/80 rounded-xl transition-all text-zinc-400 hover:text-white border border-white/5 hover:border-white/15"
+                            title="Back to feeds"
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                        </button>
                         <div className="relative w-8 h-8 shrink-0">
-                            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-lg blur-sm opacity-40" />
-                            <div className="relative w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-lg flex items-center justify-center">
-                                <Eye className="w-4 h-4 text-white" />
+                            <div className="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg blur-sm opacity-50" />
+                            <div className="relative w-8 h-8 bg-gradient-to-br from-[#121826] to-[#1c2438] border border-amber-500/40 rounded-lg flex items-center justify-center">
+                                <Eye className="w-4 h-4 text-amber-400" />
                             </div>
                         </div>
                         <div className="min-w-0">
-                            <h1 className="text-sm font-semibold truncate text-gray-900">{videoName}</h1>
-                            <p className="text-[10px] text-gray-400">{events.length} events · {alerts.length} alerts</p>
+                            <h1 className="text-sm font-bold truncate text-white tracking-tight">{videoName}</h1>
+                            <p className="text-[10px] text-zinc-400 font-mono">
+                                {events.length} event{events.length !== 1 ? 's' : ''} · {alerts.length} threat alert{alerts.length !== 1 ? 's' : ''}
+                            </p>
                         </div>
                     </div>
-                    {alerts.length > 0 && (
-                        <span className={`shrink-0 flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg border font-medium ${
-                            alerts.some(a => a.alert?.stage === 'C')
-                                ? 'bg-red-50 text-red-600 border-red-200 animate-pulse-ring'
-                                : 'bg-orange-50 text-orange-600 border-orange-200'
-                        }`}>
-                            <Shield className="w-3 h-3" /> {alerts.length}
-                        </span>
-                    )}
-                    <button
-                        title="Download TXT report"
-                        disabled={reportLoading || events.length === 0}
-                        onClick={async () => {
-                            setReportLoading(true)
-                            try {
-                                const res = await fetch(api.videoReportTextUrl(videoId))
-                                if (!res.ok) throw new Error(`HTTP ${res.status}`)
-                                const blob = await res.blob()
-                                const blobUrl = URL.createObjectURL(blob)
-                                const a = document.createElement('a')
-                                a.href = blobUrl; a.download = `report_${videoId}.txt`
-                                document.body.appendChild(a); a.click(); document.body.removeChild(a)
-                                URL.revokeObjectURL(blobUrl)
-                            } finally { setReportLoading(false) }
-                        }}
-                        className="cursor-pointer shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-[10px] font-medium text-gray-600 hover:text-gray-900 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                        {reportLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <FileText className="w-3 h-3" />}
-                        TXT
-                    </button>
-                    <button
-                        title="Download PDF report"
-                        disabled={pdfLoading || events.length === 0}
-                        onClick={async () => {
-                            setPdfLoading(true)
-                            try {
-                                const res = await fetch(api.videoReportPdfUrl(videoId))
-                                if (!res.ok) throw new Error(`HTTP ${res.status}`)
-                                const blob = await res.blob()
-                                const blobUrl = URL.createObjectURL(blob)
-                                const a = document.createElement('a')
-                                a.href = blobUrl; a.download = `report_${videoId}.pdf`
-                                document.body.appendChild(a); a.click(); document.body.removeChild(a)
-                                URL.revokeObjectURL(blobUrl)
-                            } finally { setPdfLoading(false) }
-                        }}
-                        className="cursor-pointer shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-[10px] font-medium text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                        {pdfLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}
-                        PDF
-                    </button>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                        {alerts.length > 0 && (
+                            <span className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg border font-mono font-semibold ${
+                                alerts.some(a => a.alert?.stage === 'C')
+                                    ? 'bg-red-500/20 text-red-400 border-red-500/40 animate-pulse-ring'
+                                    : 'bg-orange-500/20 text-orange-400 border-orange-500/40'
+                            }`}>
+                                <Shield className="w-3.5 h-3.5" />
+                                <span>{alerts.length} Alert{alerts.length !== 1 ? 's' : ''}</span>
+                            </span>
+                        )}
+
+                        <button
+                            title="Download TXT report"
+                            disabled={reportLoading || events.length === 0}
+                            onClick={async () => {
+                                setReportLoading(true)
+                                try {
+                                    const res = await fetch(api.videoReportTextUrl(videoId))
+                                    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+                                    const blob = await res.blob()
+                                    const blobUrl = URL.createObjectURL(blob)
+                                    const a = document.createElement('a')
+                                    a.href = blobUrl; a.download = `report_${videoId}.txt`
+                                    document.body.appendChild(a); a.click(); document.body.removeChild(a)
+                                    URL.revokeObjectURL(blobUrl)
+                                } finally { setReportLoading(false) }
+                            }}
+                            className="cursor-pointer shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono font-medium text-zinc-300 hover:text-white bg-zinc-900/80 hover:bg-zinc-800 border border-white/10 hover:border-white/20 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                            {reportLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" /> : <FileText className="w-3.5 h-3.5 text-zinc-400" />}
+                            <span>TXT</span>
+                        </button>
+
+                        <button
+                            title="Download PDF report"
+                            disabled={pdfLoading || events.length === 0}
+                            onClick={async () => {
+                                setPdfLoading(true)
+                                try {
+                                    const res = await fetch(api.videoReportPdfUrl(videoId))
+                                    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+                                    const blob = await res.blob()
+                                    const blobUrl = URL.createObjectURL(blob)
+                                    const a = document.createElement('a')
+                                    a.href = blobUrl; a.download = `report_${videoId}.pdf`
+                                    document.body.appendChild(a); a.click(); document.body.removeChild(a)
+                                    URL.revokeObjectURL(blobUrl)
+                                } finally { setPdfLoading(false) }
+                            }}
+                            className="cursor-pointer shrink-0 flex items-center gap-1 px-3 py-1.5 text-xs font-mono font-medium text-amber-300 hover:text-amber-200 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
+                        >
+                            {pdfLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                            <span>PDF</span>
+                        </button>
+                    </div>
                 </div>
             </header>
 
-            {/* Summary Card */}
+            {/* AI Summary Hero Card */}
             {summary && (
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 w-full animate-fade-up">
-                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm"
-                         style={{ borderLeft: `4px solid ${riskAccent(summary.risk_level)}` }}>
+                    <div
+                        className="glass-panel rounded-2xl p-5 sm:p-6 shadow-2xl relative overflow-hidden border border-white/10"
+                        style={{ borderLeft: `4px solid ${riskAccent(summary.risk_level)}` }}
+                    >
                         <div className="flex items-center gap-2 mb-3">
-                            <Brain className="w-4 h-4 text-indigo-600" />
-                            <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">AI Analysis</span>
-                            <span className={`text-[10px] px-2.5 py-0.5 rounded-full border font-bold ml-auto ${riskBadge(summary.risk_level)} ${summary.risk_level === 'high' ? 'animate-pulse-ring' : ''}`}>
+                            <Brain className="w-4 h-4 text-amber-400" />
+                            <span className="text-xs font-bold text-amber-400 font-mono uppercase tracking-wider">AI Forensic Analysis</span>
+                            <span className={`text-[10px] px-2.5 py-0.5 rounded-full border font-mono font-bold ml-auto ${riskBadge(summary.risk_level)}`}>
                                 {summary.risk_level.toUpperCase()} RISK
                             </span>
                         </div>
-                        <p className="text-sm text-gray-700 leading-relaxed mb-3">{summary.summary}</p>
-                        <div className="flex flex-wrap gap-1.5 mb-1">
+                        <p className="text-xs sm:text-sm text-zinc-200 leading-relaxed mb-4 whitespace-pre-line">{summary.summary}</p>
+                        <div className="flex flex-wrap gap-2 mb-2">
                             {summary.intent.map(i => (
-                                <span key={i} className="text-[10px] px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-full border border-indigo-200 font-medium">
+                                <span key={i} className="text-[11px] px-2.5 py-0.5 bg-violet-500/15 text-violet-300 rounded-lg border border-violet-500/30 font-mono font-medium">
                                     {i.replace(/_/g, ' ')}
                                 </span>
                             ))}
                             {summary.tags.slice(0, 5).map(t => (
-                                <span key={t} className="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full border border-gray-200">
-                                    {t}
+                                <span key={t} className="text-[11px] px-2 py-0.5 bg-zinc-900/80 text-zinc-400 rounded-lg border border-white/10 font-mono">
+                                    #{t}
                                 </span>
                             ))}
                         </div>
+
                         {summary.key_moments.length > 0 && (
-                            <div className="mt-3 border-t border-gray-100 pt-3">
-                                <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-3">Key Moments</p>
+                            <div className="mt-4 border-t border-white/[0.08] pt-3.5">
+                                <p className="text-[10px] text-zinc-400 font-mono font-semibold uppercase tracking-wider mb-3">Key Surveillance Moments</p>
                                 <div className="relative pl-5">
-                                    <div className="absolute left-1.5 top-1 bottom-1 w-px bg-gradient-to-b from-indigo-400/60 via-indigo-300/30 to-transparent" />
+                                    <div className="absolute left-1.5 top-1 bottom-1 w-px bg-gradient-to-b from-amber-400 via-orange-500/40 to-transparent" />
                                     <div className="space-y-3">
                                         {summary.key_moments.map((km, i) => (
                                             <div key={i} className="flex items-start gap-3 relative">
-                                                <div className="absolute -left-[15px] top-1 w-2.5 h-2.5 rounded-full bg-indigo-500 border-2 border-white shrink-0 shadow-sm" />
-                                                <span className="text-indigo-600 font-mono text-xs shrink-0 pt-px">{km.time}</span>
-                                                <span className="text-gray-600 text-xs leading-relaxed">{km.description}</span>
+                                                <div className="absolute -left-[15px] top-1 w-2.5 h-2.5 rounded-full bg-amber-400 border-2 border-[#0d121e] shrink-0 shadow-sm shadow-amber-400/50" />
+                                                <span className="text-amber-400 font-mono text-xs shrink-0 pt-px font-semibold">{km.time}</span>
+                                                <span className="text-zinc-300 text-xs leading-relaxed">{km.description}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -209,22 +224,22 @@ export default function VideoPage() {
             )}
 
             {/* Tabs */}
-            <div className="border-b border-gray-200 bg-white sticky top-[57px] z-20">
+            <div className="border-b border-white/[0.08] bg-[#080c14]/90 backdrop-blur-xl sticky top-[57px] z-20">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 flex gap-1">
                     {(['chat', 'alerts', 'events', 'insights', 'memory'] as const).map(t => (
                         <button
                             key={t}
                             onClick={() => setTab(t)}
-                            className={`cursor-pointer px-4 py-2.5 text-xs font-medium transition-all border-b-2 capitalize ${
+                            className={`cursor-pointer px-4 py-3 text-xs font-mono font-semibold transition-all border-b-2 capitalize tracking-wide ${
                                 tab === t
-                                    ? 'text-indigo-600 border-indigo-600'
-                                    : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300'
+                                    ? 'text-amber-400 border-amber-400 bg-amber-500/10'
+                                    : 'text-zinc-400 border-transparent hover:text-zinc-200 hover:border-zinc-700'
                             }`}
                         >
                             {t === 'alerts'   ? `Alerts (${alerts.length})` :
                              t === 'events'   ? `Events (${events.length})` :
                              t === 'insights' ? 'Insights' :
-                             t === 'memory'   ? 'Memory' : 'Chat'}
+                             t === 'memory'   ? 'Memory' : 'Chat & Search'}
                         </button>
                     ))}
                 </div>
@@ -234,39 +249,42 @@ export default function VideoPage() {
             <div className="flex-1 overflow-hidden relative z-10">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-24 gap-3">
-                        <Loader2 className="w-7 h-7 animate-spin text-indigo-500" />
-                        <p className="text-xs text-gray-400">Loading analysis...</p>
+                        <Loader2 className="w-7 h-7 animate-spin text-amber-400" />
+                        <p className="text-xs text-zinc-400 font-mono">Loading surveillance analysis...</p>
                     </div>
                 ) : tab === 'chat' ? (
                     <ChatPanel videoId={videoId} />
                 ) : tab === 'alerts' ? (
-                    <CardList items={alerts} emptyIcon={Shield} emptyText="No alerts detected" />
+                    <CardList items={alerts} emptyIcon={Shield} emptyText="No threat alerts detected" />
                 ) : tab === 'insights' ? (
                     <InsightsPanel videoId={videoId} />
                 ) : tab === 'memory' ? (
                     <MemoryPanel videoId={videoId} />
                 ) : (
-                    <CardList items={events} emptyIcon={Activity} emptyText="No events" />
+                    <CardList items={events} emptyIcon={Activity} emptyText="No movement events detected" />
                 )}
             </div>
         </div>
     )
 }
 
-// ─── StatChip ─────────────────────────────────────────────────────────────────
-
-function StatChip({ icon, label, color }: { icon: React.ReactNode; label: string; color: 'violet' | 'gray' }) {
+function StatChip({ icon, label, color }: {
+    icon: React.ReactNode
+    label: string
+    color: 'violet' | 'gray'
+}) {
     const cls = color === 'violet'
-        ? 'bg-violet-50 text-violet-600 border-violet-200'
-        : 'bg-gray-100 text-gray-500 border-gray-200'
+        ? 'bg-violet-500/10 text-violet-300 border-violet-500/25'
+        : 'bg-zinc-900/80 text-zinc-300 border-white/10'
     return (
-        <span className={`flex items-center gap-1.5 text-[10px] px-2.5 py-1 ${cls} border rounded-lg font-medium`}>
-            {icon}{label}
+        <span className={`inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg border font-mono font-medium ${cls}`}>
+            {icon}
+            <span>{label}</span>
         </span>
     )
 }
 
-// ─── CardList ────────────────────────────────────────────────────────────────
+// ─── CardList (Events & Alerts) ──────────────────────────────────────────────
 
 function CardList({ items, emptyIcon: Icon, emptyText }: {
     items: EventData[]
@@ -276,16 +294,16 @@ function CardList({ items, emptyIcon: Icon, emptyText }: {
     const [expanded, setExpanded] = useState<string | null>(null)
 
     if (items.length === 0) return (
-        <div className="text-center py-24 text-gray-400">
-            <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <div className="text-center py-24 text-zinc-500">
+            <div className="w-14 h-14 bg-zinc-900 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
                 <Icon className="w-7 h-7 opacity-40" />
             </div>
-            <p className="text-sm">{emptyText}</p>
+            <p className="text-sm font-mono">{emptyText}</p>
         </div>
     )
 
     return (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 space-y-2">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 space-y-3">
             {items.map((raw, idx) => {
                 const e = ev(raw)
                 const isOpen = expanded === e.clipId
@@ -295,44 +313,60 @@ function CardList({ items, emptyIcon: Icon, emptyText }: {
                     <button
                         key={e.clipId}
                         onClick={() => setExpanded(isOpen ? null : e.clipId)}
-                        className={`cursor-pointer w-full text-left bg-white border rounded-xl p-4 transition-all animate-fade-up hover:shadow-md ${
+                        className={`cursor-pointer w-full text-left glass-card rounded-2xl p-4 sm:p-5 transition-all animate-fade-up border ${
                             isStageC
-                                ? 'border-red-200 hover:border-red-300'
-                                : 'border-gray-200 hover:border-gray-300'
+                                ? 'border-red-500/40 hover:border-red-500/70 glow-red'
+                                : 'border-white/[0.08] hover:border-white/20'
                         } ${stageGlow(e.alertStage)}`}
-                        style={{ animationDelay: `${idx * 30}ms` }}
+                        style={{ animationDelay: `${idx * 25}ms` }}
                     >
                         <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 min-w-0">
+                            <div className="flex items-center gap-2.5 min-w-0">
                                 {e.alertStage !== 'none' && (
-                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-md border font-bold shrink-0 ${stageColor(e.alertStage)}`}>
-                                        {e.alertStage}
+                                    <span className={`text-[10px] px-2 py-0.5 rounded-md border font-mono font-bold shrink-0 ${stageColor(e.alertStage)}`}>
+                                        STAGE {e.alertStage}
                                     </span>
                                 )}
-                                <span className={`text-sm font-medium truncate ${labelColor(e.label)}`}>
+                                <span className={`text-sm font-bold truncate ${labelColor(e.label)}`}>
                                     {e.label.replace(/_/g, ' ')}
                                 </span>
                             </div>
-                            <div className="flex items-center gap-2 shrink-0">
+                            <div className="flex items-center gap-3 shrink-0">
                                 {e.alertScore > 0 && (
-                                    <span className={`text-xs font-mono font-semibold ${
-                                        e.alertScore > 0.7 ? 'text-red-500' : e.alertScore > 0.4 ? 'text-orange-500' : 'text-gray-400'
-                                    }`}>{e.alertScore.toFixed(2)}</span>
+                                    <span className={`text-xs font-mono font-bold ${
+                                        e.alertScore > 0.7 ? 'text-red-400' : e.alertScore > 0.4 ? 'text-orange-400' : 'text-zinc-400'
+                                    }`}>
+                                        score {e.alertScore.toFixed(2)}
+                                    </span>
                                 )}
-                                {isOpen ? <ChevronUp className="w-3.5 h-3.5 text-gray-400" /> : <ChevronDown className="w-3.5 h-3.5 text-gray-300" />}
+                                <span className="text-xs font-mono text-zinc-400">{fmt(e.start)}–{fmt(e.end)}</span>
+                                {isOpen ? <ChevronUp className="w-4 h-4 text-zinc-500" /> : <ChevronDown className="w-4 h-4 text-zinc-500" />}
                             </div>
                         </div>
-                        <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
-                            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {fmt(e.start)}–{fmt(e.end)}</span>
-                            <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {e.people}</span>
-                            {e.peakMotion > 0 && (
-                                <span className="flex items-center gap-1"><Zap className="w-3 h-3" /> {e.peakMotion.toFixed(2)}</span>
-                            )}
-                        </div>
-                        {isOpen && e.caption && (
-                            <p className="mt-3 text-xs text-gray-600 leading-relaxed border-t border-gray-100 pt-3 animate-fade-up">
-                                {e.caption}
-                            </p>
+
+                        {e.caption && (
+                            <p className="text-xs text-zinc-300 mt-2 leading-relaxed line-clamp-2">{e.caption}</p>
+                        )}
+
+                        {isOpen && (
+                            <div className="mt-4 pt-3.5 border-t border-white/[0.08] grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono animate-fade-in">
+                                <div className="bg-zinc-900/80 p-2.5 rounded-xl border border-white/5">
+                                    <span className="text-[10px] text-zinc-500 block">PEOPLE DETECTED</span>
+                                    <span className="text-sm font-bold text-zinc-200">{e.people}</span>
+                                </div>
+                                <div className="bg-zinc-900/80 p-2.5 rounded-xl border border-white/5">
+                                    <span className="text-[10px] text-zinc-500 block">PEAK MOTION</span>
+                                    <span className="text-sm font-bold text-zinc-200">{(e.peakMotion * 100).toFixed(0)}%</span>
+                                </div>
+                                <div className="bg-zinc-900/80 p-2.5 rounded-xl border border-white/5">
+                                    <span className="text-[10px] text-zinc-500 block">CONFIDENCE</span>
+                                    <span className="text-sm font-bold text-zinc-200">{(e.confidence * 100).toFixed(0)}%</span>
+                                </div>
+                                <div className="bg-zinc-900/80 p-2.5 rounded-xl border border-white/5">
+                                    <span className="text-[10px] text-zinc-500 block">DURATION</span>
+                                    <span className="text-sm font-bold text-zinc-200">{e.duration.toFixed(1)}s</span>
+                                </div>
+                            </div>
                         )}
                     </button>
                 )
@@ -341,7 +375,7 @@ function CardList({ items, emptyIcon: Icon, emptyText }: {
     )
 }
 
-// ─── ChatPanel — ChatGPT style ────────────────────────────────────────────────
+// ─── ChatPanel ────────────────────────────────────────────────────────────────
 
 interface LocalMsg {
     id: string
@@ -367,7 +401,7 @@ function ChatPanel({ videoId }: { videoId: string }) {
             } else {
                 setMessages([{
                     id: 'init', role: 'assistant',
-                    text: 'Ask me anything about this video. I\'ll search the footage and give you specific answers with timestamps.\n\nTry: "What happened?", "Any theft or fighting?", "Who was involved?"',
+                    text: 'Ask me anything about this video. I\'ll inspect the footage and give you specific answers with timestamps.\n\nTry: "What happened?", "Any theft or fighting?", "Who was involved?"',
                 }])
             }
         }).catch(() => {
@@ -408,12 +442,12 @@ function ChatPanel({ videoId }: { videoId: string }) {
                 ))
             }
             setMessages(prev => prev.map(m => m.id === loadId
-                ? { ...m, streaming: false, text: fullText || 'Nothing found.' }
+                ? { ...m, streaming: false, text: fullText || 'No clear answer found.' }
                 : m
             ))
         } catch {
             setMessages(prev => prev.map(m => m.id === loadId
-                ? { ...m, loading: false, streaming: false, text: 'Search failed. Try again.' }
+                ? { ...m, loading: false, streaming: false, text: 'Search query failed. Please verify backend connection.' }
                 : m
             ))
         } finally {
@@ -422,68 +456,70 @@ function ChatPanel({ videoId }: { videoId: string }) {
     }
 
     return (
-        <div className="flex flex-col h-[calc(100vh-220px)] bg-gray-50">
-            {/* Messages */}
+        <div className="flex flex-col h-[calc(100vh-220px)] bg-[#080c14] relative">
+            {/* Messages container */}
             <div className="flex-1 overflow-y-auto py-6">
-                <div className="max-w-2xl mx-auto px-4 space-y-6">
+                <div className="max-w-3xl mx-auto px-4 space-y-6">
                     {messages.map((msg) => (
                         msg.role === 'user' ? (
-                            /* User message — right-aligned bubble */
+                            /* User message bubble */
                             <div key={msg.id} className="flex justify-end animate-fade-up">
-                                <div className="max-w-[80%] bg-indigo-600 text-white rounded-2xl rounded-br-md px-4 py-3 shadow-sm">
-                                    <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                                <div className="max-w-[80%] bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-2xl rounded-br-sm px-4.5 py-3 shadow-lg shadow-amber-500/20">
+                                    <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-medium">{msg.text}</p>
                                 </div>
                             </div>
                         ) : (
-                            /* AI message — left-aligned, no bubble, with icon */
-                            <div key={msg.id} className="flex gap-3 animate-fade-up">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                            /* AI message */
+                            <div key={msg.id} className="flex gap-3.5 animate-fade-up">
+                                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 border border-violet-400/30 flex items-center justify-center shrink-0 mt-0.5 shadow-md shadow-violet-500/20">
                                     <Brain className="w-4 h-4 text-white" />
                                 </div>
-                                <div className="flex-1 min-w-0 pt-1">
+                                <div className="flex-1 min-w-0 pt-0.5">
                                     {msg.loading ? (
-                                        <div className="flex items-center gap-1.5 pt-1">
-                                            <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                                            <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '160ms' }} />
-                                            <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '320ms' }} />
+                                        <div className="flex items-center gap-2 pt-2">
+                                            <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                            <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '160ms' }} />
+                                            <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '320ms' }} />
                                         </div>
                                     ) : (
-                                        <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
-                                            {msg.text}
-                                            {msg.streaming && (
-                                                <span className="inline-block w-0.5 h-4 bg-indigo-500 ml-0.5 animate-blink-cursor align-middle" />
-                                            )}
-                                        </p>
+                                        <div className="glass-panel rounded-2xl p-4.5 border border-white/10 shadow-lg">
+                                            <p className="text-xs sm:text-sm text-zinc-100 leading-relaxed whitespace-pre-wrap">
+                                                {msg.text}
+                                                {msg.streaming && (
+                                                    <span className="inline-block w-1.5 h-4 bg-amber-400 ml-1 animate-blink-cursor align-middle" />
+                                                )}
+                                            </p>
+                                        </div>
                                     )}
 
                                     {/* Matching clips */}
                                     {msg.results && msg.results.length > 0 && (
-                                        <div className="mt-3 space-y-2 animate-fade-up">
-                                            <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">
-                                                {msg.results.length} matching clip{msg.results.length !== 1 ? 's' : ''}
+                                        <div className="mt-3.5 space-y-2.5 animate-fade-up">
+                                            <p className="text-[10px] text-zinc-400 font-mono font-semibold uppercase tracking-wider px-1">
+                                                {msg.results.length} Evidence Clip{msg.results.length !== 1 ? 's' : ''} Identified
                                             </p>
                                             {msg.results.slice(0, 5).map((raw, i) => {
                                                 const e = ev(raw)
                                                 return (
                                                     <div
                                                         key={e.clipId || i}
-                                                        className="bg-white border border-gray-200 rounded-xl p-3 text-xs shadow-sm animate-fade-up"
-                                                        style={{ animationDelay: `${i * 60}ms` }}
+                                                        className="glass-card rounded-xl p-3 text-xs shadow-md border border-white/[0.08] hover:border-amber-400/40 transition-colors animate-fade-up"
+                                                        style={{ animationDelay: `${i * 50}ms` }}
                                                     >
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="text-gray-300 font-mono">#{i + 1}</span>
-                                                            <span className={`font-semibold ${labelColor(e.label)}`}>
+                                                        <div className="flex items-center gap-2.5 font-mono">
+                                                            <span className="text-zinc-500 font-semibold">#{i + 1}</span>
+                                                            <span className={`font-bold ${labelColor(e.label)}`}>
                                                                 {e.label.replace(/_/g, ' ')}
                                                             </span>
                                                             {e.alertStage !== 'none' && (
                                                                 <span className={`text-[9px] px-1.5 py-0.5 rounded-md border font-bold ${stageColor(e.alertStage)}`}>
-                                                                    {e.alertStage}
+                                                                    STAGE {e.alertStage}
                                                                 </span>
                                                             )}
-                                                            <span className="text-gray-300 ml-auto font-mono">{fmt(e.start)}–{fmt(e.end)}</span>
+                                                            <span className="text-amber-400 ml-auto font-semibold">{fmt(e.start)}–{fmt(e.end)}</span>
                                                         </div>
                                                         {e.caption && (
-                                                            <p className="text-gray-500 mt-1.5 line-clamp-2 leading-relaxed">{e.caption}</p>
+                                                            <p className="text-zinc-300 mt-1.5 line-clamp-2 leading-relaxed text-[11px]">{e.caption}</p>
                                                         )}
                                                     </div>
                                                 )
@@ -498,35 +534,35 @@ function ChatPanel({ videoId }: { videoId: string }) {
                 </div>
             </div>
 
-            {/* Input bar — ChatGPT style */}
-            <div className="bg-gray-50 border-t border-gray-200 px-4 py-4">
-                <div className="max-w-2xl mx-auto">
-                    <div className="bg-white border border-gray-300 rounded-2xl shadow-sm focus-within:shadow-md focus-within:border-indigo-300 transition-all">
+            {/* Input bar */}
+            <div className="bg-[#080c14]/95 border-t border-white/[0.08] px-4 py-4 backdrop-blur-xl">
+                <div className="max-w-3xl mx-auto">
+                    <div className="bg-zinc-950/80 border border-white/10 rounded-2xl shadow-inner focus-within:border-amber-500/50 focus-within:ring-2 focus-within:ring-amber-500/20 transition-all">
                         <div className="flex items-center gap-3 px-4 py-3">
-                            <Search className="w-4 h-4 text-gray-300 shrink-0" />
+                            <Search className="w-4 h-4 text-zinc-500 shrink-0" />
                             <input
                                 type="text"
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
                                 onKeyDown={e => e.key === 'Enter' && handleSend()}
-                                placeholder="Ask about this video..."
+                                placeholder="Ask questions about this video footage (e.g. 'what did the person do?')..."
                                 disabled={searching}
-                                className="flex-1 text-sm text-gray-800 placeholder-gray-400 outline-none bg-transparent disabled:opacity-50"
+                                className="flex-1 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 outline-none bg-transparent disabled:opacity-50"
                             />
                             <button
                                 onClick={handleSend}
                                 disabled={searching || !input.trim()}
-                                className="cursor-pointer shrink-0 p-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-200 rounded-xl transition-all active:scale-95 disabled:cursor-not-allowed"
+                                className="cursor-pointer shrink-0 p-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:from-zinc-800 disabled:to-zinc-800 disabled:text-zinc-600 text-white rounded-xl transition-all active:scale-95 disabled:cursor-not-allowed shadow-md"
                             >
                                 {searching
                                     ? <Loader2 className="w-4 h-4 text-white animate-spin" />
-                                    : <Send className="w-4 h-4 text-white disabled:text-gray-400" />
+                                    : <Send className="w-4 h-4 text-white" />
                                 }
                             </button>
                         </div>
                     </div>
-                    <p className="text-center text-[10px] text-gray-400 mt-2">
-                        CLIP semantic search + Gemini synthesis
+                    <p className="text-center text-[10px] text-zinc-500 font-mono mt-2">
+                        CLIP semantic search · Gemini 3.5 forensic streaming
                     </p>
                 </div>
             </div>
@@ -557,57 +593,67 @@ function MemoryPanel({ videoId }: { videoId: string }) {
     }
 
     const suggestions = [
-        'Any prior incidents involving assault?',
-        'Have similar fights been detected before?',
+        'Any prior incidents involving theft?',
+        'Have similar intruders been detected before?',
         'Show all high-risk incidents',
-        'Shoplifting near an entrance?',
+        'Unauthorized movement at night?',
     ]
 
     return (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 space-y-4">
-            <div className="bg-white border border-gray-200 rounded-xl p-4 flex gap-3 shadow-sm">
-                <Globe className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+            <div className="glass-panel rounded-2xl p-4.5 flex gap-3.5 border border-white/10 shadow-lg">
+                <Globe className="w-5 h-5 text-violet-400 shrink-0 mt-0.5" />
                 <div>
-                    <p className="text-sm font-semibold text-gray-800 mb-1">Cross-Video Intelligence</p>
-                    <p className="text-xs text-gray-500 leading-relaxed">
-                        Query persistent memory across <span className="text-gray-700 font-medium">all</span> processed videos — find patterns across time, locations, and incidents.
+                    <p className="text-sm font-bold text-white mb-0.5">Cross-Video Surveillance Intelligence</p>
+                    <p className="text-xs text-zinc-400 leading-relaxed">
+                        Query persistent memory across <span className="text-zinc-200 font-semibold">all</span> ingested surveillance streams to spot repeat suspects and security threats.
                     </p>
                 </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-3">
+            <div className="glass-panel rounded-2xl p-5 border border-white/10 shadow-lg space-y-3.5">
                 <div className="flex items-center justify-between">
-                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Query</p>
-                    <label className="flex items-center gap-1.5 text-xs text-gray-500 cursor-pointer select-none">
-                        <input type="checkbox" checked={scoped} onChange={e => setScoped(e.target.checked)} className="w-3 h-3 accent-indigo-500" />
-                        This video only
+                    <p className="text-[10px] text-zinc-400 uppercase tracking-wider font-mono font-semibold">Memory Query</p>
+                    <label className="flex items-center gap-1.5 text-xs text-zinc-400 cursor-pointer select-none">
+                        <input
+                            type="checkbox"
+                            checked={scoped}
+                            onChange={e => setScoped(e.target.checked)}
+                            className="w-3.5 h-3.5 accent-amber-500 rounded bg-zinc-900 border-white/20"
+                        />
+                        <span>Scope to this video only</span>
                     </label>
                 </div>
-                <div className="bg-white border border-gray-300 rounded-2xl shadow-sm focus-within:shadow-md focus-within:border-indigo-300 transition-all">
+
+                <div className="bg-zinc-950/80 border border-white/10 rounded-xl shadow-inner focus-within:border-violet-500/50 focus-within:ring-2 focus-within:ring-violet-500/20 transition-all">
                     <div className="flex items-center gap-3 px-4 py-3">
-                        <Search className="w-4 h-4 text-gray-300 shrink-0" />
+                        <Search className="w-4 h-4 text-zinc-500 shrink-0" />
                         <input
                             type="text"
                             value={query}
                             onChange={e => setQuery(e.target.value)}
                             onKeyDown={e => e.key === 'Enter' && handleQuery()}
-                            placeholder="e.g. Has anyone been assaulted in this area before?"
-                            className="flex-1 text-sm text-gray-800 placeholder-gray-400 outline-none bg-transparent"
+                            placeholder="e.g. Has this person or similar prowler been observed before?"
+                            className="flex-1 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 outline-none bg-transparent"
                         />
                         <button
                             onClick={handleQuery}
                             disabled={loading || !query.trim()}
-                            className="cursor-pointer shrink-0 p-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-200 rounded-xl transition-all active:scale-95 disabled:cursor-not-allowed"
+                            className="cursor-pointer shrink-0 p-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:from-zinc-800 disabled:to-zinc-800 text-white rounded-lg transition-all active:scale-95 disabled:cursor-not-allowed"
                         >
                             {loading ? <Loader2 className="w-4 h-4 text-white animate-spin" /> : <Search className="w-4 h-4 text-white" />}
                         </button>
                     </div>
                 </div>
+
                 {!result && !loading && (
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-2 pt-1">
                         {suggestions.map(s => (
-                            <button key={s} onClick={() => setQuery(s)}
-                                className="cursor-pointer text-[10px] px-2.5 py-1 bg-gray-50 text-gray-500 hover:text-gray-800 hover:bg-gray-100 border border-gray-200 rounded-lg transition-all">
+                            <button
+                                key={s}
+                                onClick={() => setQuery(s)}
+                                className="cursor-pointer text-[11px] px-2.5 py-1 bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 border border-white/[0.08] rounded-lg transition-all"
+                            >
                                 {s}
                             </button>
                         ))}
@@ -616,55 +662,48 @@ function MemoryPanel({ videoId }: { videoId: string }) {
             </div>
 
             {loading && (
-                <div className="flex items-center justify-center gap-2.5 py-8 text-gray-400 text-sm">
-                    <div className="flex gap-1">
-                        <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '160ms' }} />
-                        <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '320ms' }} />
-                    </div>
-                    Searching memory…
+                <div className="flex items-center justify-center gap-2.5 py-8 text-zinc-400 text-xs font-mono">
+                    <Loader2 className="w-4 h-4 animate-spin text-violet-400" />
+                    <span>Searching cross-stream surveillance memories...</span>
                 </div>
             )}
-            {error && <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-600">{error}</div>}
+            {error && <div className="bg-red-950/40 border border-red-500/30 rounded-xl p-4 text-xs text-red-400">{error}</div>}
             {result && !result.configured && (
-                <div className="bg-white border border-gray-200 rounded-xl p-5 text-center space-y-2 shadow-sm">
-                    <Globe className="w-8 h-8 text-gray-300 mx-auto" />
-                    <p className="text-sm text-gray-500">Supermemory is not configured.</p>
-                    <p className="text-xs text-gray-400">Set <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono">SUPERMEMORY_API_KEY</code> in your backend .env</p>
+                <div className="glass-card rounded-2xl p-6 text-center space-y-2 border border-white/10 shadow-lg">
+                    <Globe className="w-8 h-8 text-zinc-500 mx-auto" />
+                    <p className="text-sm text-zinc-300 font-semibold">Supermemory API key not configured</p>
+                    <p className="text-xs text-zinc-400 font-mono">Set <code className="bg-zinc-900 px-2 py-0.5 rounded text-amber-300 border border-white/10">SUPERMEMORY_API_KEY</code> in backend/.env</p>
                 </div>
             )}
             {result && result.configured && (
-                <div className="space-y-3 animate-fade-up">
-                    <div className="bg-white border border-indigo-200 rounded-xl p-4 shadow-sm" style={{ borderLeft: '3px solid #6366f1' }}>
+                <div className="space-y-3.5 animate-fade-up">
+                    <div className="glass-panel rounded-2xl p-5 border border-violet-500/30 shadow-lg" style={{ borderLeft: '4px solid #8b5cf6' }}>
                         <div className="flex items-center gap-2 mb-2">
-                            <Brain className="w-4 h-4 text-indigo-500" />
-                            <span className="text-[10px] text-indigo-600 uppercase tracking-wider font-semibold">Intelligence Synthesis</span>
+                            <Brain className="w-4 h-4 text-violet-400" />
+                            <span className="text-[10px] text-violet-300 uppercase font-mono tracking-wider font-semibold">Intelligence Synthesis</span>
                         </div>
-                        <p className="text-sm text-gray-700 leading-relaxed">{result.answer}</p>
+                        <p className="text-xs sm:text-sm text-zinc-200 leading-relaxed whitespace-pre-wrap">{result.answer}</p>
                     </div>
                     {result.memories.length > 0 && (
                         <div className="space-y-2">
-                            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold px-1">
-                                {result.memories.length} Matched Record{result.memories.length !== 1 ? 's' : ''}
+                            <p className="text-[10px] text-zinc-400 uppercase tracking-wider font-mono font-semibold px-1">
+                                {result.memories.length} Matched Surveillance Record{result.memories.length !== 1 ? 's' : ''}
                             </p>
                             {result.memories.map((mem, i) => (
-                                <div key={i} className="bg-white border border-gray-200 rounded-xl p-3.5 shadow-sm animate-fade-up" style={{ animationDelay: `${i * 80}ms` }}>
+                                <div key={i} className="glass-card rounded-xl p-3.5 shadow-md border border-white/[0.08]" style={{ animationDelay: `${i * 60}ms` }}>
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-1.5">
-                                            <FileText className="w-3 h-3 text-gray-300" />
-                                            <span className="text-[10px] text-gray-400 font-mono">Record #{i + 1}</span>
+                                            <FileText className="w-3.5 h-3.5 text-zinc-500" />
+                                            <span className="text-[10px] text-zinc-400 font-mono font-semibold">Record #{i + 1}</span>
                                         </div>
-                                        {mem.score > 0 && <span className="text-[10px] text-gray-300 font-mono">score {mem.score.toFixed(3)}</span>}
+                                        {mem.score > 0 && <span className="text-[10px] text-violet-400 font-mono font-semibold">score {mem.score.toFixed(3)}</span>}
                                     </div>
-                                    <p className="text-xs text-gray-600 leading-relaxed line-clamp-4 whitespace-pre-line">
+                                    <p className="text-xs text-zinc-300 leading-relaxed line-clamp-4 whitespace-pre-line">
                                         {mem.content.slice(0, 400)}{mem.content.length > 400 && '…'}
                                     </p>
                                 </div>
                             ))}
                         </div>
-                    )}
-                    {result.memories.length === 0 && (
-                        <p className="text-center text-sm text-gray-400 py-4">No matching records found.</p>
                     )}
                 </div>
             )}
@@ -684,15 +723,15 @@ function InsightsPanel({ videoId }: { videoId: string }) {
 
     if (loading) return (
         <div className="flex justify-center py-24">
-            <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />
+            <Loader2 className="w-6 h-6 animate-spin text-amber-400" />
         </div>
     )
     if (!data) return (
-        <div className="text-center py-24 text-gray-400">
-            <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <div className="text-center py-24 text-zinc-500">
+            <div className="w-14 h-14 bg-zinc-900 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
                 <BarChart3 className="w-7 h-7 opacity-40" />
             </div>
-            <p className="text-sm">No insights available</p>
+            <p className="text-sm font-mono">No telemetry insights available</p>
         </div>
     )
 
@@ -703,50 +742,50 @@ function InsightsPanel({ videoId }: { videoId: string }) {
             {/* Stats bento */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                    { label: 'Events',      value: data.total_events,                                   icon: Activity,      cls: 'text-indigo-600 border-indigo-200 bg-indigo-50' },
-                    { label: 'Alerts',      value: data.total_alerts,                                   icon: AlertTriangle, cls: 'text-red-600 border-red-200 bg-red-50' },
-                    { label: 'Event Types', value: Object.keys(data.event_types).length,                icon: Tag,           cls: 'text-violet-600 border-violet-200 bg-violet-50' },
-                    { label: 'Max People',  value: Math.max(...data.timeline.map(t => t.people), 0),   icon: Users,         cls: 'text-emerald-600 border-emerald-200 bg-emerald-50' },
+                    { label: 'Total Events', value: data.total_events, icon: Activity, cls: 'border-indigo-500/30 text-indigo-300 glow-indigo' },
+                    { label: 'Threat Alerts', value: data.total_alerts, icon: AlertTriangle, cls: 'border-red-500/30 text-red-400 glow-red' },
+                    { label: 'Event Types', value: Object.keys(data.event_types).length, icon: Tag, cls: 'border-violet-500/30 text-violet-300' },
+                    { label: 'Max People', value: Math.max(...data.timeline.map(t => t.people), 0), icon: Users, cls: 'border-emerald-500/30 text-emerald-300 glow-emerald' },
                 ].map(({ label, value, icon: Icon, cls }) => (
-                    <div key={label} className={`rounded-xl p-3.5 border animate-fade-up ${cls}`}>
-                        <div className="flex items-center gap-1.5 mb-1.5">
-                            <Icon className="w-3.5 h-3.5 opacity-70" />
-                            <span className="text-[10px] text-gray-500 uppercase tracking-wider">{label}</span>
+                    <div key={label} className={`glass-card rounded-2xl p-4 border animate-fade-up ${cls}`}>
+                        <div className="flex items-center gap-2 mb-2">
+                            <Icon className="w-3.5 h-3.5 opacity-80" />
+                            <span className="text-[10px] text-zinc-400 uppercase font-mono font-semibold tracking-wider">{label}</span>
                         </div>
-                        <div className="text-2xl font-bold">{value}</div>
+                        <div className="text-2xl font-bold font-mono">{value}</div>
                     </div>
                 ))}
             </div>
 
             {/* Event distribution */}
-            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-                <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-4">Event Distribution</h3>
-                <div className="space-y-2.5">
+            <div className="glass-panel rounded-2xl p-5 border border-white/10 shadow-lg">
+                <h3 className="text-[10px] font-bold font-mono text-zinc-400 uppercase tracking-widest mb-4">Classified Event Distribution</h3>
+                <div className="space-y-3">
                     {Object.entries(data.event_types).sort((a, b) => b[1] - a[1]).map(([label, count]) => (
                         <div key={label} className="flex items-center gap-3">
-                            <span className={`text-xs w-36 truncate font-medium ${labelColor(label)}`}>{label.replace(/_/g, ' ')}</span>
-                            <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+                            <span className={`text-xs w-40 truncate font-semibold ${labelColor(label)}`}>{label.replace(/_/g, ' ')}</span>
+                            <div className="flex-1 bg-zinc-900 rounded-full h-2.5 overflow-hidden border border-white/5">
                                 <div
-                                    className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-700"
+                                    className="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400 rounded-full transition-all duration-700"
                                     style={{ width: `${(count / maxTypeCount) * 100}%` }}
                                 />
                             </div>
-                            <span className="text-xs text-gray-400 w-6 text-right font-mono">{count}</span>
+                            <span className="text-xs text-zinc-400 w-8 text-right font-mono">{count}</span>
                         </div>
                     ))}
                 </div>
             </div>
 
             {/* Alert severity */}
-            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-                <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-4">Alert Severity</h3>
+            <div className="glass-panel rounded-2xl p-5 border border-white/10 shadow-lg">
+                <h3 className="text-[10px] font-bold font-mono text-zinc-400 uppercase tracking-widest mb-4">Threat Alert Severity</h3>
                 <div className="flex gap-3">
                     {(['C', 'B', 'A'] as const).map(stage => {
                         const count = data.alert_stages[stage] || 0
                         return (
-                            <div key={stage} className={`flex-1 rounded-xl p-3.5 border ${stageColor(stage)} ${count > 0 ? stageGlow(stage) : ''}`}>
-                                <div className="text-2xl font-bold">{count}</div>
-                                <div className="text-[10px] opacity-60 mt-0.5">Stage {stage}</div>
+                            <div key={stage} className={`flex-1 glass-card rounded-2xl p-4 border ${stageColor(stage)} ${count > 0 ? stageGlow(stage) : ''}`}>
+                                <div className="text-2xl font-bold font-mono">{count}</div>
+                                <div className="text-[11px] font-mono opacity-70 mt-1">Stage {stage} Threats</div>
                             </div>
                         )
                     })}
@@ -754,28 +793,28 @@ function InsightsPanel({ videoId }: { videoId: string }) {
             </div>
 
             {/* Activity Timeline */}
-            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-                <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-3">Activity Timeline</h3>
-                <div className="relative h-20 bg-gray-100 rounded-lg overflow-hidden">
+            <div className="glass-panel rounded-2xl p-5 border border-white/10 shadow-lg">
+                <h3 className="text-[10px] font-bold font-mono text-zinc-400 uppercase tracking-widest mb-3">Surveillance Activity Timeline</h3>
+                <div className="relative h-20 bg-zinc-950 rounded-xl overflow-hidden border border-white/10">
                     {data.timeline.length > 0 && (() => {
                         const maxEnd = Math.max(...data.timeline.map(t => t.end), 1)
                         return data.timeline.map((t, i) => {
                             const left  = (t.start / maxEnd) * 100
-                            const width = Math.max(((t.end - t.start) / maxEnd) * 100, 0.5)
-                            const color = t.alert_stage === 'C' ? 'bg-red-400' :
-                                          t.alert_stage === 'B' ? 'bg-orange-400' :
-                                          t.alert_stage === 'A' ? 'bg-amber-400' : 'bg-indigo-400'
+                            const width = Math.max(((t.end - t.start) / maxEnd) * 100, 0.75)
+                            const color = t.alert_stage === 'C' ? 'bg-red-500' :
+                                          t.alert_stage === 'B' ? 'bg-orange-500' :
+                                          t.alert_stage === 'A' ? 'bg-amber-400' : 'bg-indigo-500'
                             return (
                                 <div key={i}
                                     title={`${fmt(t.start)}–${fmt(t.end)} | ${t.label}`}
-                                    className={`absolute bottom-0 ${color} opacity-70 hover:opacity-100 cursor-pointer transition-opacity rounded-t`}
-                                    style={{ left: `${left}%`, width: `${width}%`, height: `${Math.min(20 + t.people * 15, 100)}%` }}
+                                    className={`absolute bottom-0 ${color} opacity-80 hover:opacity-100 cursor-pointer transition-opacity rounded-t`}
+                                    style={{ left: `${left}%`, width: `${width}%`, height: `${Math.min(25 + t.people * 20, 100)}%` }}
                                 />
                             )
                         })
                     })()}
                 </div>
-                <div className="flex justify-between text-[10px] text-gray-400 mt-1.5">
+                <div className="flex justify-between text-[10px] font-mono text-zinc-400 mt-2 px-1">
                     <span>0:00</span>
                     <span>{fmt(Math.max(...data.timeline.map(t => t.end), 0))}</span>
                 </div>
