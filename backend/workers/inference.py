@@ -41,7 +41,7 @@ from datetime import datetime
 from typing import List, Dict, Tuple, Any
 
 # ─── Config (plain Python literals — no deps) ──────────────────────────────────
-GPU_TYPE          = "A100"
+GPU_TYPE          = "T4"
 CHUNK_DURATION    = 300.0          # 5-minute segments for parallel CPU processing
 SUBCLIP_DURATION  = 10.0           # each active window sliced into N×10s sub-clips
 SUBCLIP_OVERLAP   = 2.0            # 2s overlap between consecutive sub-clips
@@ -128,7 +128,7 @@ video_vol = modal.Volume.from_name("vigilant-videos",        create_if_missing=T
 vigilant_image = (
     modal.Image.debian_slim(python_version="3.11")
     .apt_install([
-        "ffmpeg", "libgl1-mesa-glx", "libglib2.0-0", "libsm6", "libxext6",
+        "ffmpeg", "libgl1", "libglib2.0-0", "libsm6", "libxext6",
     ])
     .pip_install([
         "ultralytics>=8.3.0",
@@ -361,6 +361,7 @@ def chunk_and_score(args: Tuple) -> List[Dict]:
         MODEL_CACHE_DIR: model_vol,
         "/data":         video_vol,
     },
+    secrets=[modal.Secret.from_dotenv()],
     timeout=600,
     image=vigilant_image,
     max_containers=50,   # Modal 1.0: was concurrency_limit
