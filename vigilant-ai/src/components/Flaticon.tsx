@@ -16,11 +16,11 @@ export function Flaticon({
     ...props
 }: FlaticonProps) {
     const sizeClass = size ? {
-        xs:  'text-[11px]',
-        sm:  'text-[13px]',
-        md:  'text-[15px]',
-        lg:  'text-[18px]',
-        xl:  'text-[22px]',
+        xs: 'text-[11px]',
+        sm: 'text-[13px]',
+        md: 'text-[15px]',
+        lg: 'text-[18px]',
+        xl: 'text-[22px]',
         '2xl': 'text-[28px]',
         '3xl': 'text-[36px]',
     }[size] : ''
