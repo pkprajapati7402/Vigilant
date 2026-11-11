@@ -40,14 +40,30 @@ QUERY_EXPANSIONS: Dict[str, List[str]] = {
 }
 
 
+_STOP_WORDS = {
+    "what", "was", "is", "are", "were", "this", "that", "the", "in", "on", "at",
+    "for", "to", "a", "an", "any", "there", "video", "footage", "clip", "show",
+    "tell", "me", "about", "can", "you", "see", "doing", "happen", "happened",
+    "with", "from", "into", "onto", "then", "have", "has", "had", "does", "did"
+}
+
 def _expand_query(query: str) -> List[str]:
-    """Expand a query with related terms for better recall."""
+    """Expand a query with related terms and keywords for better recall."""
     query_lower = query.lower().strip()
     expansions = [query]
 
     for key, terms in QUERY_EXPANSIONS.items():
         if key in query_lower or query_lower in key:
             expansions.extend(terms)
+
+    # Extract individual meaningful keywords from the query
+    words = re.findall(r'[a-zA-Z0-9]+', query_lower)
+    for w in words:
+        if len(w) >= 3 and w not in _STOP_WORDS:
+            expansions.append(w)
+            for key, terms in QUERY_EXPANSIONS.items():
+                if w == key or key in w:
+                    expansions.extend(terms[:4])
 
     return list(dict.fromkeys(expansions))  # deduplicate, preserve order
 

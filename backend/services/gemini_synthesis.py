@@ -14,6 +14,13 @@ from __future__ import annotations
 import os, json, asyncio, threading
 from typing import List, Dict, Any, Optional, AsyncIterator
 
+# Load .env if present
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
+except ImportError:
+    pass
+
 
 # ─── JSON Cleaner ─────────────────────────────────────────────────────────────
 
@@ -99,7 +106,12 @@ def _clean_json_string(raw: str) -> str:
 _API_ERROR_CAPTIONS = {"api error", "api error.", "[api error]", "api_error"}
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-MODEL_ID = "gemini-2.5-flash"
+GEMINI_MODELS = [
+    "gemini-3.5-flash",
+    "gemini-3.1-flash-lite",
+    "gemini-3-flash-preview",
+]
+MODEL_ID = GEMINI_MODELS[0]
 
 # ─── Gemini Client ────────────────────────────────────────────────────────────
 
@@ -130,13 +142,30 @@ def _get_client():
 
 def _call_gemini_once(prompt: str) -> str:
     mode, client = _get_client()
-    if mode == "google-genai":
-        response = client.models.generate_content(model=MODEL_ID, contents=prompt)
-        return response.text or ""
-
-    # Legacy SDK path (google-generativeai)
-    response = client.generate_content(prompt)
-    return getattr(response, "text", "") or ""
+    last_err = None
+    for model_id in GEMINI_MODELS:
+        try:
+            if mode == "google-genai":
+                response = client.models.generate_content(model=model_id, contents=prompt)
+                if response and response.text:
+                    return response.text
+            else:
+                # Legacy SDK path (google-generativeai)
+                import google.generativeai as legacy
+                m = legacy.GenerativeModel(model_id)
+                response = m.generate_content(prompt)
+                if getattr(response, "text", ""):
+                    return response.text
+        except Exception as e:
+            last_err = e
+            err_str = str(e)
+            print(f"[Gemini] {model_id} synthesis failed: {e}")
+            if any(k in err_str for k in ("404", "429", "503", "UNAVAILABLE", "NOT_FOUND", "RESOURCE_EXHAUSTED", "overloaded")):
+                continue
+            raise
+    if last_err:
+        raise last_err
+    return ""
 
 
 def _call_gemini(prompt: str, max_tokens: int = 2048) -> str:
@@ -420,22 +449,45 @@ async def chat_answer_stream(
 
     def _stream_text_chunks(prompt_text: str):
         mode, client = _get_client()
-        if mode == "google-genai":
-            for chunk in client.models.generate_content_stream(model=MODEL_ID, contents=prompt_text):
-                text = chunk.text or ""
-                if text:
-                    yield text
-            return
-
-        # Legacy SDK path (google-generativeai)
-        for chunk in client.generate_content(prompt_text, stream=True):
-            text = getattr(chunk, "text", "") or ""
-            if text:
-                yield text
+        last_err = None
+        for model_id in GEMINI_MODELS:
+            try:
+                if mode == "google-genai":
+                    stream = client.models.generate_content_stream(model=model_id, contents=prompt_text)
+                    chunk_found = False
+                    for chunk in stream:
+                        text = chunk.text or ""
+                        if text:
+                            chunk_found = True
+                            yield text
+                    if chunk_found:
+                        return
+                else:
+                    # Legacy SDK path (google-generativeai)
+                    import google.generativeai as legacy
+                    m = legacy.GenerativeModel(model_id)
+                    stream = m.generate_content(prompt_text, stream=True)
+                    chunk_found = False
+                    for chunk in stream:
+                        text = getattr(chunk, "text", "") or ""
+                        if text:
+                            chunk_found = True
+                            yield text
+                    if chunk_found:
+                        return
+            except Exception as e:
+                last_err = e
+                err_str = str(e)
+                print(f"[Gemini] {model_id} stream error: {e}")
+                if any(k in err_str for k in ("404", "429", "503", "UNAVAILABLE", "NOT_FOUND", "RESOURCE_EXHAUSTED", "overloaded")):
+                    continue
+                raise
+        if last_err:
+            raise last_err
 
     def _run_stream():
         import time, random
-        MAX_RETRIES = 3
+        MAX_RETRIES = 2
         for attempt in range(MAX_RETRIES):
             try:
                 for text in _stream_text_chunks(prompt):
@@ -446,12 +498,19 @@ async def chat_answer_stream(
                 rate_limited = "429" in err or "RESOURCE_EXHAUSTED" in err or "quota" in err.lower()
                 server_err   = any(x in err for x in ("500", "502", "503", "overloaded"))
                 if attempt < MAX_RETRIES - 1 and (rate_limited or server_err):
-                    backoff = (2 ** attempt) * (8 if rate_limited else 2) + random.uniform(1, 2)
+                    backoff = (2 ** attempt) * (4 if rate_limited else 2) + random.uniform(0.5, 1.5)
                     print(f"Gemini stream {'rate-limited' if rate_limited else 'server error'} "
                           f"(attempt {attempt+1}/{MAX_RETRIES}) — retry in {backoff:.1f}s")
                     time.sleep(backoff)
                 else:
                     print(f"Gemini stream error ({type(e).__name__}): {e}")
+                    # Provide an informative fallback answer if streaming completely failed
+                    fallback_text = (
+                        f"In this video ('{video_name}'), {len(relevant_events)} event(s) were observed. "
+                    )
+                    if video_summary:
+                        fallback_text += f"\n\nVideo Summary: {video_summary}"
+                    loop.call_soon_threadsafe(queue.put_nowait, fallback_text)
                     break
         loop.call_soon_threadsafe(queue.put_nowait, None)  # sentinel always sent
 

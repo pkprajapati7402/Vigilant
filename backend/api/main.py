@@ -285,15 +285,26 @@ def _process_video_direct(video_id: str, video_name: str, file_path: str):
                     "Provide a concise, 1-2 sentence description of any person actions, posture, movement, or stealth/theft/suspicious behavior.\n"
                     "Output JSON: {\"description\": \"...\", \"is_fighting\": false, \"is_stealing\": false, \"is_erratic\": false}"
                 )
-                resp = gemini_client.models.generate_content(
-                    model="gemini-2.0-flash",
-                    contents=[*img_parts, prompt],
-                    config=types.GenerateContentConfig(temperature=0.2, response_mime_type="application/json")
-                )
+                resp = None
+                for m_id in ["gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-3-flash-preview"]:
+                    try:
+                        resp = gemini_client.models.generate_content(
+                            model=m_id,
+                            contents=[*img_parts, prompt],
+                            config=types.GenerateContentConfig(temperature=0.2, response_mime_type="application/json")
+                        )
+                        if resp and resp.text:
+                            break
+                    except Exception as ge:
+                        print(f"[direct] Gemini vision {m_id} error: {ge}")
+                        continue
+
                 if resp and resp.text:
                     clean_text = resp.text.strip()
                     if clean_text.startswith("```"):
                         clean_text = clean_text.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
+                    if clean_text.startswith("json"):
+                        clean_text = clean_text[4:].strip()
                     parsed = json.loads(clean_text)
                     caption_text = parsed.get("description", "")
                     vlm_flags["is_fighting"] = parsed.get("is_fighting", False)
@@ -553,11 +564,58 @@ def video_alerts(video_id: str, top_k: int = Query(50, le=200)):
 
 @app.get("/api/videos/{video_id}/summary")
 def video_summary(video_id: str):
-    from services.db import get_video_summary
+    from services.db import get_video_summary, get_events, save_video_summary, list_videos
     summary = get_video_summary(video_id)
+
+    # Auto-resynthesize if summary is missing or is the default fallback ("Video '...' contains X detected events.")
+    is_placeholder = summary and (
+        summary.get("summary", "").startswith("Video '")
+        and "contains" in summary.get("summary", "")
+        and "detected events" in summary.get("summary", "")
+    )
+    if not summary or is_placeholder:
+        events = get_events(video_id=video_id, limit=500)
+        if events:
+            try:
+                from services.gemini_synthesis import synthesize_video
+                from services.ingest import _validate_synthesis
+                video_name = video_id
+                for v in list_videos():
+                    if v.get("id") == video_id:
+                        video_name = v.get("name", video_id)
+                        break
+                new_synthesis = synthesize_video(events, video_name)
+                new_synthesis = _validate_synthesis(new_synthesis, events)
+                save_video_summary(video_id, new_synthesis)
+                return new_synthesis
+            except Exception as e:
+                print(f"Auto-resynthesis error: {e}")
+
     if not summary:
         return {"video_id": video_id, "summary": None}
     return summary
+
+
+@app.post("/api/videos/{video_id}/resynthesize")
+def resynthesize_video_endpoint(video_id: str):
+    from services.db import get_events, save_video_summary, list_videos
+    from services.gemini_synthesis import synthesize_video
+    from services.ingest import _validate_synthesis
+
+    events = get_events(video_id=video_id, limit=500)
+    if not events:
+        raise HTTPException(404, f"No events found for video '{video_id}'")
+
+    video_name = video_id
+    for v in list_videos():
+        if v.get("id") == video_id:
+            video_name = v.get("name", video_id)
+            break
+
+    synthesis = synthesize_video(events, video_name)
+    synthesis = _validate_synthesis(synthesis, events)
+    save_video_summary(video_id, synthesis)
+    return {"status": "ok", "video_id": video_id, "summary": synthesis}
 
 
 @app.get("/api/videos/{video_id}/insights")
@@ -618,6 +676,12 @@ def chat_search(req: ChatRequest):
 
     # Step 1: Retrieve relevant events
     relevant = hybrid_search(query=req.query, video_id=req.video_id, top_k=req.top_k)
+    if not relevant and req.video_id:
+        from services.db import get_events
+        relevant = get_events(video_id=req.video_id, limit=req.top_k)
+    if not relevant and req.video_id:
+        from services.db import get_events
+        relevant = get_events(video_id=req.video_id, limit=req.top_k)
 
     # Step 2: Get video summary for context
     summary_text = None
@@ -663,6 +727,9 @@ async def chat_stream(req: ChatRequest):
     from services.db import get_video_summary, save_chat_message
 
     relevant = hybrid_search(query=req.query, video_id=req.video_id, top_k=req.top_k)
+    if not relevant and req.video_id:
+        from services.db import get_events
+        relevant = get_events(video_id=req.video_id, limit=req.top_k)
 
     summary_text = None
     video_name = ""

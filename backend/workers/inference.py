@@ -56,7 +56,7 @@ ALERT_C_THRESHOLD = 0.70
 YOLO_CONF         = 0.25           # lower = catch more subtle detections
 YOLO_MODEL        = "yolo11l.pt"
 CLIP_MODEL_ID     = "openai/clip-vit-large-patch14"
-GEMINI_MODEL_ID   = "gemini-2.5-pro"               # vision API — best reasoning for subtle actions
+GEMINI_MODEL_ID   = "gemini-3.5-flash"             # vision API — fast reasoning for subtle actions
 GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "")
 MODEL_CACHE_DIR   = "/models"      # path inside Modal Volume
 QWEN_MODEL_ID     = "Qwen/Qwen2.5-VL-7B-Instruct"
