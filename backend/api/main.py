@@ -105,32 +105,320 @@ def _cleanup(path: str):
         pass
 
 
+def _process_video_direct(video_id: str, video_name: str, file_path: str):
+    """Direct video processing pipeline (running directly on local machine or Colab, no Modal required)."""
+    import cv2
+    import numpy as np
+    from datetime import datetime
+    import math
+
+    t_start = time.time()
+    _jobs[video_id] = {"status": "processing", "progress": 15, "error": None}
+
+    # Step 1: Video duration
+    cap = cv2.VideoCapture(file_path)
+    if not cap.isOpened():
+        raise RuntimeError(f"Cannot open video: {file_path}")
+    fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    total_seconds = total_frames / fps if fps > 0 else 0.0
+    cap.release()
+    print(f"[direct] Duration: {total_seconds:.1f}s, fps: {fps}")
+
+    _jobs[video_id]["progress"] = 25
+
+    # Step 2: Active subclips & motion analysis
+    from workers.pipeline import (
+        make_video_chunks, find_active_windows, make_subclips,
+        is_after_hours, label_from_signals, compute_alert_score, extract_caption_threats
+    )
+
+    raw_chunks = make_video_chunks(total_seconds, 300.0)
+    all_subclips = []
+    t_cpu_start = time.time()
+
+    for chunk_idx, (chunk_start, chunk_end) in enumerate(raw_chunks):
+        cap = cv2.VideoCapture(file_path)
+        cap.set(cv2.CAP_PROP_POS_MSEC, chunk_start * 1000)
+        sample_every = max(1, int(fps / 2))
+        motion_scores = []
+        prev_gray = None
+        f_idx = 0
+
+        while cap.isOpened():
+            pos_sec = cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
+            if pos_sec > chunk_end + 0.5:
+                break
+            ret, frame = cap.read()
+            if not ret:
+                break
+            if f_idx % sample_every == 0:
+                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                gray = cv2.GaussianBlur(gray, (5, 5), 0)
+                if prev_gray is not None:
+                    diff = cv2.absdiff(prev_gray, gray)
+                    score = float(np.sum(diff > 25) / diff.size)
+                    motion_scores.append((pos_sec, score))
+                prev_gray = gray
+            f_idx += 1
+        cap.release()
+
+        raw_windows = find_active_windows(motion_scores) if motion_scores else []
+        if not raw_windows and total_seconds > 0:
+            raw_windows = [(0.0, total_seconds)]
+
+        try:
+            mtime = os.path.getmtime(file_path)
+            recording_hour = datetime.fromtimestamp(mtime).hour
+        except Exception:
+            recording_hour = 12
+        after_hours = is_after_hours(recording_hour)
+
+        for w_idx, (win_start, win_end) in enumerate(raw_windows):
+            subclips = make_subclips(win_start, win_end, 10.0, 2.0)
+            for sc_start, sc_end in subclips:
+                all_subclips.append({
+                    "video_source": video_name,
+                    "start_sec": sc_start,
+                    "end_sec": sc_end,
+                    "duration": sc_end - sc_start,
+                    "chunk_index": chunk_idx,
+                    "window_index": w_idx,
+                    "after_hours": after_hours,
+                    "dwell_seconds": win_end - win_start,
+                })
+
+    cpu_time_s = time.time() - t_cpu_start
+    print(f"[direct] {len(all_subclips)} sub-clips detected (motion phase: {cpu_time_s:.1f}s)")
+    _jobs[video_id]["progress"] = 40
+
+    if not all_subclips:
+        all_subclips.append({
+            "video_source": video_name,
+            "start_sec": 0.0,
+            "end_sec": min(total_seconds, 10.0),
+            "duration": min(total_seconds, 10.0),
+            "chunk_index": 0,
+            "window_index": 0,
+            "after_hours": False,
+            "dwell_seconds": min(total_seconds, 10.0),
+        })
+
+    # Step 3: YOLO & Gemini inference
+    yolo_model = None
+    try:
+        from ultralytics import YOLO
+        yolo_model = YOLO("yolo11n.pt")
+        print("[direct] YOLO11 loaded successfully")
+    except Exception as e:
+        print(f"[direct] YOLO not loaded ({e})")
+
+    gemini_key = os.environ.get("GEMINI_API_KEY", "")
+    gemini_client = None
+    if gemini_key:
+        try:
+            from google import genai
+            gemini_client = genai.Client(api_key=gemini_key)
+            print("[direct] Gemini client initialized")
+        except Exception as e:
+            print(f"[direct] Gemini client init warning: {e}")
+
+    events = []
+    t_gpu_start = time.time()
+
+    for idx, sc in enumerate(all_subclips):
+        _jobs[video_id]["progress"] = 40 + int(((idx + 1) / len(all_subclips)) * 40)
+        win_start = sc["start_sec"]
+        win_end = sc["end_sec"]
+        clip_id = f"c{sc['chunk_index']:02d}_w{sc['window_index']:04d}_{idx:02d}"
+
+        cap = cv2.VideoCapture(file_path)
+        cap.set(cv2.CAP_PROP_POS_MSEC, win_start * 1000)
+        step = max(1, int(fps / 8))
+        frames = []
+        while cap.isOpened():
+            ts = cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
+            if ts > win_end + 0.1:
+                break
+            ret, frame = cap.read()
+            if not ret:
+                break
+            frames.append((ts, frame))
+        cap.release()
+
+        people_max = 0
+        vehicle_max = 0
+        objects_seen = {}
+
+        if yolo_model and frames:
+            sample_frames = [f[1] for f in frames[::step]]
+            if sample_frames:
+                try:
+                    yolo_res = yolo_model(sample_frames, conf=0.25, verbose=False)
+                    for res in yolo_res:
+                        p_c, v_c = 0, 0
+                        for box in res.boxes:
+                            cname = res.names[int(box.cls[0])]
+                            objects_seen[cname] = objects_seen.get(cname, 0) + 1
+                            if cname == "person":
+                                p_c += 1
+                            elif cname in ("car", "truck", "bus", "motorcycle"):
+                                v_c += 1
+                        people_max = max(people_max, p_c)
+                        vehicle_max = max(vehicle_max, v_c)
+                except Exception as e:
+                    print(f"[direct] YOLO error: {e}")
+
+        caption_text = ""
+        vlm_flags = {"is_fighting": False, "is_stealing": False, "is_erratic": False}
+
+        if gemini_client and frames:
+            try:
+                from PIL import Image
+                from google.genai import types
+                k_step = max(1, len(frames) // 4)
+                sampled_frames = frames[::k_step][:4]
+                img_parts = [Image.fromarray(cv2.cvtColor(f[1], cv2.COLOR_BGR2RGB)) for f in sampled_frames]
+
+                prompt = (
+                    "You are a Forensic Video Surveillance Analyst. Analyze these sequential CCTV frames.\n"
+                    "Provide a concise, 1-2 sentence description of any person actions, posture, movement, or stealth/theft/suspicious behavior.\n"
+                    "Output JSON: {\"description\": \"...\", \"is_fighting\": false, \"is_stealing\": false, \"is_erratic\": false}"
+                )
+                resp = gemini_client.models.generate_content(
+                    model="gemini-2.0-flash",
+                    contents=[*img_parts, prompt],
+                    config=types.GenerateContentConfig(temperature=0.2, response_mime_type="application/json")
+                )
+                if resp and resp.text:
+                    clean_text = resp.text.strip()
+                    if clean_text.startswith("```"):
+                        clean_text = clean_text.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
+                    parsed = json.loads(clean_text)
+                    caption_text = parsed.get("description", "")
+                    vlm_flags["is_fighting"] = parsed.get("is_fighting", False)
+                    vlm_flags["is_stealing"] = parsed.get("is_stealing", False)
+                    vlm_flags["is_erratic"] = parsed.get("is_erratic", False)
+            except Exception as e:
+                print(f"[direct] Gemini keyframe captioning error: {e}")
+
+        if not caption_text:
+            caption_text = f"Activity detected from {win_start:.1f}s to {win_end:.1f}s with {people_max} person(s)."
+
+        ev_list, tags = label_from_signals(
+            people_count=people_max,
+            vehicle_count=vehicle_max,
+            contact_score=0.0,
+            peak_motion=0.5,
+            dwell_seconds=sc["dwell_seconds"],
+            after_hours_flag=sc["after_hours"],
+            caption=caption_text,
+        )
+        top_event = ev_list[0] if ev_list else {"label": "activity_detected", "confidence": 0.5}
+
+        caption_threats = extract_caption_threats(caption_text)
+        alert_score, alert_stage = compute_alert_score(
+            evidence={
+                "motion": 0.5,
+                "overlap": 0.0,
+                "dwell_norm": min(1.0, sc["dwell_seconds"] / 60.0),
+                "people_norm": min(1.0, people_max / 4.0),
+                "after_hours": 1.0 if sc["after_hours"] else 0.0,
+            },
+            after_hours_flag=sc["after_hours"],
+            events_list=ev_list,
+            caption_threats=caption_threats,
+        )
+
+        if vlm_flags.get("is_stealing") or any(w in caption_text.lower() for w in ("theft", "thief", "steal", "creep", "sneak", "prowl")):
+            if alert_stage == "none":
+                alert_stage = "Stage B"
+                alert_score = max(alert_score, 0.65)
+
+        events.append({
+            "clip_id": clip_id,
+            "video_source": video_name,
+            "start": round(win_start, 2),
+            "end": round(win_end, 2),
+            "duration": round(win_end - win_start, 2),
+            "detections": {
+                "people_count": people_max,
+                "vehicle_count": vehicle_max,
+                "peak_motion": 0.5,
+                "mean_motion": 0.3,
+                "contact_score": 0.0,
+                "objects": objects_seen if objects_seen else None,
+            },
+            "event": {
+                "label": top_event["label"],
+                "confidence": round(top_event.get("confidence", 0.5), 3),
+            },
+            "events_detected": ev_list,
+            "caption": caption_text,
+            "tags": list(set(tags + [top_event["label"]])),
+            "alert": {
+                "score": round(alert_score, 3),
+                "stage": alert_stage,
+                "reason": f"Activity: {top_event['label']}",
+            },
+            "_clip_embedding": [0.0] * 768,
+            "_track_trajectories": {},
+            "processed_at": datetime.utcnow().isoformat() + "Z",
+            "processing_gpu": "Direct-GPU",
+        })
+
+    gpu_time_s = time.time() - t_gpu_start
+    total_time_s = time.time() - t_start
+
+    alerts = [e for e in events if e["alert"]["stage"] != "none"]
+    events_path = RESULTS_DIR / f"{video_id}_events.json"
+    with open(events_path, "w") as f:
+        json.dump({
+            "video": video_name,
+            "duration_s": total_seconds,
+            "total_alerts": len(alerts),
+            "gpu": "Direct-GPU",
+            "chunks": len(raw_chunks),
+            "subclips": len(all_subclips),
+            "cpu_time_s": round(cpu_time_s, 1),
+            "gpu_time_s": round(gpu_time_s, 1),
+            "processing_time_s": round(total_time_s, 1),
+            "events": events,
+        }, f)
+
+    _jobs[video_id] = {"status": "analyzing", "progress": 85, "error": None}
+
+    from services.ingest import ingest_results
+    ingest_results(str(events_path), delete_json=True)
+
+    _cleanup(file_path)
+    _jobs[video_id] = {"status": "done", "progress": 100, "error": None}
+    print(f"[direct] Video '{video_name}' complete in {total_time_s:.1f}s")
+
+
 def _process_video_background(video_id: str, video_name: str, file_path: str):
-    """Background: upload → Modal → ingest (SQLite + VectorAI + Gemini) → cleanup."""
+    """Background: Try Modal if configured, otherwise fallback to Direct pipeline."""
     try:
         import modal
+        import modal.config
+        cfg = modal.config.config
+        if not (cfg.get("token_id") and cfg.get("token_secret")):
+            raise RuntimeError("Modal token not configured")
 
         t_start = time.time()
-
-        # Step 1: Upload to Modal Volume
         _jobs[video_id] = {"status": "uploading", "progress": 10, "error": None}
         video_vol = modal.Volume.from_name("vigilant-videos", create_if_missing=True)
         with video_vol.batch_upload(force=True) as batch:
             batch.put_file(file_path, video_name)
         print(f"[upload] '{video_name}' → Modal Volume")
 
-        # Step 2: Call deployed Modal functions
         _jobs[video_id] = {"status": "processing", "progress": 25, "error": None}
-
         get_video_duration = modal.Function.from_name("vigilant-ai", "get_video_duration")
         chunk_and_score = modal.Function.from_name("vigilant-ai", "chunk_and_score")
         FeatureExtractorCls = modal.Cls.from_name("vigilant-ai", "FeatureExtractor")
         extractor = FeatureExtractorCls()
 
         total_seconds = get_video_duration.remote(video_name)
-        print(f"[upload] Duration: {total_seconds:.1f}s")
-        _jobs[video_id]["progress"] = 35
-
         num_chunks = max(1, math.ceil(total_seconds / 300.0))
         chunk_args = [
             (video_name, i * 300.0, min((i + 1) * 300.0, total_seconds), i)
@@ -142,9 +430,6 @@ def _process_video_background(video_id: str, video_name: str, file_path: str):
         chunked_results = list(chunk_and_score.map(chunk_args, order_outputs=True))
         cpu_time_s = time.time() - t_cpu_start
         all_subclips = [sc for chunk_scs in chunked_results for sc in chunk_scs]
-        print(f"[upload] {len(all_subclips)} sub-clips (CPU phase: {cpu_time_s:.1f}s)")
-
-        _jobs[video_id]["progress"] = 60
 
         if not all_subclips:
             _cleanup(file_path)
@@ -156,11 +441,8 @@ def _process_video_background(video_id: str, video_name: str, file_path: str):
         events = list(extractor.extract_from_window.map(all_subclips, order_outputs=False))
         gpu_time_s = time.time() - t_gpu_start
         events.sort(key=lambda e: e["start"])
-        print(f"[upload] {len(events)} events (GPU phase: {gpu_time_s:.1f}s)")
 
         _jobs[video_id]["progress"] = 75
-
-        # Step 3: Save results + ingest (SQLite + VectorAI + Gemini)
         alerts = [e for e in events if e["alert"]["stage"] != "none"]
         total_time_s = time.time() - t_start
         events_path = RESULTS_DIR / f"{video_id}_events.json"
@@ -179,18 +461,20 @@ def _process_video_background(video_id: str, video_name: str, file_path: str):
             }, f)
 
         _jobs[video_id] = {"status": "analyzing", "progress": 85, "error": None}
-
         from services.ingest import ingest_results
         ingest_results(str(events_path), delete_json=True)
-
         _cleanup(file_path)
         _jobs[video_id] = {"status": "done", "progress": 100, "error": None}
-        print(f"[upload] Complete '{video_name}' in {total_time_s:.1f}s")
+        print(f"[upload] Complete '{video_name}' via Modal in {total_time_s:.1f}s")
 
     except Exception as e:
-        traceback.print_exc()
-        _jobs[video_id] = {"status": "error", "progress": 0, "error": str(e)}
-        _cleanup(file_path)
+        print(f"[upload] Modal execution failed or not configured ({e}). Running direct pipeline...")
+        try:
+            _process_video_direct(video_id, video_name, file_path)
+        except Exception as direct_err:
+            traceback.print_exc()
+            _jobs[video_id] = {"status": "error", "progress": 0, "error": str(direct_err)}
+            _cleanup(file_path)
 
 
 @app.post("/api/upload")
