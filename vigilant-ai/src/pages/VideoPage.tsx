@@ -68,7 +68,7 @@ export default function VideoPage() {
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                         <button
-                            onClick={() => navigate('/')}
+                            onClick={() => navigate('/dashboard')}
                             className="cursor-pointer p-2 hover:bg-slate-100 rounded-xl transition-all text-slate-500 hover:text-slate-800 border border-slate-200 shadow-xs"
                             title="Back to dashboard"
                         >

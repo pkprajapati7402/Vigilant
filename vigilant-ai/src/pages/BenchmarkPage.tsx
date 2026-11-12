@@ -352,7 +352,7 @@ export default function BenchmarkPage() {
             <header className="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-xs">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
                     <button
-                        onClick={() => navigate('/')}
+                        onClick={() => navigate('/dashboard')}
                         className="cursor-pointer p-2 hover:bg-slate-100 rounded-xl transition-all text-slate-500 hover:text-slate-800 border border-slate-200 shadow-xs"
                     >
                         <Flaticon name="angle-small-left" className="text-base" />
