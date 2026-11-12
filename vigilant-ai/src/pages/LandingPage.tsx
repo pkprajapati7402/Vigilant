@@ -511,82 +511,198 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* The Problem: Modern Camera Blindspot */}
+            {/* Surveillance Section: More cameras. Less certainty. */}
             <section id="features" className="py-16 md:py-24 bg-white border-y border-slate-200/80">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-                    <div className="text-center max-w-2xl mx-auto space-y-3">
-                        <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3.5 py-1 rounded-full border border-blue-200">
-                            THE SURVEILLANCE PARADOX
-                        </span>
-                        <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                            More Cameras Do Not Mean More Safety.
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 text-left">
+                    {/* Header: Left Aligned */}
+                    <div className="space-y-4 max-w-2xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-blue-200 text-blue-600 text-xs font-semibold shadow-2xs">
+                            <span className="w-2 h-2 rounded-full bg-blue-600" />
+                            <span>SURVEILLANCE</span>
+                        </div>
+                        <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
+                            More cameras.<br />
+                            <span className="text-blue-600">Less certainty.</span>
                         </h2>
-                        <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                            A single human security operator monitoring 12 CCTV screens misses over 95% of subtle motion events after just 22 minutes. Modern security infrastructure records blindly into cold storage.
+                        <p className="text-sm sm:text-base text-slate-500 leading-relaxed">
+                            More surveillance footage doesn't automatically mean better security.<br className="hidden sm:inline" />
+                            Intelligent monitoring turns passive recordings into actionable security insights.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch text-left">
-                        {/* Legacy Way */}
-                        <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-5">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-bold">
-                                    ✕
+                    {/* 2-Column Comparison Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-stretch">
+                        {/* Traditional CCTV Card */}
+                        <div className="bg-[#F8FAFC] border border-slate-200/90 rounded-3xl p-6 sm:p-9 space-y-6 flex flex-col justify-between shadow-xs">
+                            <div>
+                                {/* Header */}
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-slate-200/70 text-slate-700 flex items-center justify-center shrink-0">
+                                        <Flaticon name="video-camera" className="text-xl text-slate-700" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+                                            Traditional CCTV
+                                        </h3>
+                                        <span className="inline-block mt-1 px-3 py-0.5 rounded-full bg-slate-200/60 text-slate-600 text-xs font-medium">
+                                            Reactive monitoring
+                                        </span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="text-base font-bold text-slate-900">Legacy CCTV (Passive Storage)</h3>
-                                    <p className="text-xs text-slate-400">The current standard across 90% of facilities</p>
+
+                                <div className="border-b border-slate-200/80 my-6" />
+
+                                {/* 4 Items */}
+                                <div className="space-y-5">
+                                    {/* 1. Delayed detection */}
+                                    <div className="flex items-start gap-3.5">
+                                        <div className="w-8 h-8 rounded-full bg-slate-200/60 text-slate-600 flex items-center justify-center shrink-0 mt-0.5">
+                                            <Flaticon name="clock" className="text-sm" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-slate-900 leading-tight">
+                                                Delayed detection
+                                            </h4>
+                                            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                                                Issues are discovered after incidents occur.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* 2. Manual investigation */}
+                                    <div className="flex items-start gap-3.5">
+                                        <div className="w-8 h-8 rounded-full bg-slate-200/60 text-slate-600 flex items-center justify-center shrink-0 mt-0.5">
+                                            <Flaticon name="play" className="text-xs" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-slate-900 leading-tight">
+                                                Manual investigation
+                                            </h4>
+                                            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                                                Hours spent reviewing footage.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* 3. No intelligent search */}
+                                    <div className="flex items-start gap-3.5">
+                                        <div className="w-8 h-8 rounded-full bg-slate-200/60 text-slate-600 flex items-center justify-center shrink-0 mt-0.5">
+                                            <Flaticon name="search" className="text-xs" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-slate-900 leading-tight">
+                                                No intelligent search
+                                            </h4>
+                                            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                                                Finding a person requires manual scrubbing.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* 4. Human fatigue */}
+                                    <div className="flex items-start gap-3.5">
+                                        <div className="w-8 h-8 rounded-full bg-slate-200/60 text-slate-600 flex items-center justify-center shrink-0 mt-0.5">
+                                            <Flaticon name="users" className="text-xs" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-slate-900 leading-tight">
+                                                Human fatigue
+                                            </h4>
+                                            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                                                Critical moments can go unnoticed.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <ul className="space-y-3 text-xs sm:text-sm text-slate-600">
-                                <li className="flex items-start gap-2.5">
-                                    <span className="text-red-500 font-bold shrink-0 mt-0.5">•</span>
-                                    <span><strong>Purely Reactive:</strong> Zero real-time alerts. Guards only review tapes days after burglary or damage occurred.</span>
-                                </li>
-                                <li className="flex items-start gap-2.5">
-                                    <span className="text-red-500 font-bold shrink-0 mt-0.5">•</span>
-                                    <span><strong>Painful Manual Scrubbing:</strong> Investigators spend 8 to 20 hours rewinding 16-channel video files frame by frame.</span>
-                                </li>
-                                <li className="flex items-start gap-2.5">
-                                    <span className="text-red-500 font-bold shrink-0 mt-0.5">•</span>
-                                    <span><strong>Zero Semantic Search:</strong> You cannot ask your NVR: <em>"Where did the person in the yellow hoodie go?"</em></span>
-                                </li>
-                                <li className="flex items-start gap-2.5">
-                                    <span className="text-red-500 font-bold shrink-0 mt-0.5">•</span>
-                                    <span><strong>Vigilance Fatigue:</strong> Human attention decays steeply, letting critical intrusions pass unseen.</span>
-                                </li>
-                            </ul>
                         </div>
 
-                        {/* Vigilant AI Way */}
-                        <div className="bg-blue-50/50 border border-blue-200/80 rounded-3xl p-6 sm:p-8 space-y-5 relative overflow-hidden">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-xs">
-                                    ✓
+                        {/* Vigilant AI Card */}
+                        <div className="bg-white border-2 border-blue-200/90 rounded-3xl p-6 sm:p-9 space-y-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                            {/* Ambient subtle light blue corner tint */}
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/40 rounded-full blur-2xl -z-10 pointer-events-none" />
+
+                            <div>
+                                {/* Header */}
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                                        <Flaticon name="eye" type="sr" className="text-xl text-white" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+                                            Vigilant AI
+                                        </h3>
+                                        <span className="inline-block mt-1 px-3 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
+                                            Intelligent monitoring
+                                        </span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="text-base font-bold text-slate-900">Vigilant AI (Autonomous Sentinel Stream)</h3>
-                                    <p className="text-xs text-blue-600 font-medium">Continuous real-time visual perception + cognitive intelligence</p>
+
+                                <div className="border-b border-blue-100 my-6" />
+
+                                {/* 4 Items */}
+                                <div className="space-y-5">
+                                    {/* 1. Real-time detection */}
+                                    <div className="flex items-start gap-3.5">
+                                        <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                                            <Flaticon name="bolt" type="sr" className="text-xs text-blue-600" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-slate-900 leading-tight">
+                                                Real-time detection
+                                            </h4>
+                                            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                                                Potential threats are identified instantly.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* 2. Automated investigation */}
+                                    <div className="flex items-start gap-3.5">
+                                        <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                                            <Flaticon name="display" className="text-xs text-blue-600" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-slate-900 leading-tight">
+                                                Automated investigation
+                                            </h4>
+                                            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                                                Quickly locate relevant footage.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* 3. Natural language search */}
+                                    <div className="flex items-start gap-3.5">
+                                        <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                                            <Flaticon name="comment-alt-dots" className="text-xs text-blue-600" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-slate-900 leading-tight">
+                                                Natural language search
+                                            </h4>
+                                            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                                                Find people and events using simple queries.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* 4. Intelligent analysis */}
+                                    <div className="flex items-start gap-3.5">
+                                        <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                                            <Flaticon name="stats" className="text-xs text-blue-600" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-slate-900 leading-tight">
+                                                Intelligent analysis
+                                            </h4>
+                                            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                                                Understand context and suspicious behaviour.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <ul className="space-y-3 text-xs sm:text-sm text-slate-700">
-                                <li className="flex items-start gap-2.5">
-                                    <span className="text-blue-600 font-bold shrink-0 mt-0.5">•</span>
-                                    <span><strong>Instant Threat Triage:</strong> Sub-millisecond neural tracking extracts movement vectors, escalating high-priority threats instantly.</span>
-                                </li>
-                                <li className="flex items-start gap-2.5">
-                                    <span className="text-blue-600 font-bold shrink-0 mt-0.5">•</span>
-                                    <span><strong>Natural Language Query:</strong> Search 100s of hours of footage in plain English with instant timecoded visual proof.</span>
-                                </li>
-                                <li className="flex items-start gap-2.5">
-                                    <span className="text-blue-600 font-bold shrink-0 mt-0.5">•</span>
-                                    <span><strong>Multimodal Behavioral Reasoning:</strong> Deep visual intelligence distinguishes benign actions from stealth, theft, or altercations.</span>
-                                </li>
-                                <li className="flex items-start gap-2.5">
-                                    <span className="text-blue-600 font-bold shrink-0 mt-0.5">•</span>
-                                    <span><strong>Court-Ready Forensic Reports:</strong> Auto-generate chronological PDF incident dossiers in 1 click.</span>
-                                </li>
-                            </ul>
                         </div>
                     </div>
                 </div>
