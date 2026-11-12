@@ -3,7 +3,7 @@
 > **Transforming passive CCTV cameras into proactive, real-time threat intelligence and natural-language searchable video infrastructure.**
 
 [![Camber Cloud](https://img.shields.io/badge/GPU-Camber_Cloud_GPU-10B981?style=flat-square&logo=nvidia&logoColor=white)](https://camber.cloud)
-[![Gemini 2.5](https://img.shields.io/badge/AI-Gemini_2.5_Flash-4285F4?style=flat-square&logo=google&logoColor=white)](https://deepmind.google/gemini)
+[![Gemini 3.5](https://img.shields.io/badge/AI-Gemini_3.5_Flash-4285F4?style=flat-square&logo=google&logoColor=white)](https://deepmind.google/gemini)
 [![Actian VectorAI](https://img.shields.io/badge/VectorDB-Actian_VectorAI-F97316?style=flat-square)](https://actian.com)
 [![Supermemory](https://img.shields.io/badge/Memory-Supermemory-8B5CF6?style=flat-square)](https://supermemory.ai)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
@@ -90,7 +90,7 @@ flowchart TD
     end
 
     subgraph S4["4. SYNTHESIS & INTERFACE"]
-        Fusion --> GemSynth["Gemini 2.5 Flash (Executive Synthesis)"]
+        Fusion --> GemSynth["Gemini 3.5 Flash (Executive Synthesis)"]
         GemSynth --> ReportGen["Incident Report Generator (PDF / TXT)"]
         
         Client["React 19 Frontend (Operator Dashboard)"] <-->|"SSE Stream / REST"| BackendAPI["FastAPI Orchestrator"]
@@ -199,8 +199,8 @@ Every clip is evaluated across physical motion magnitude, spatial overlap, perso
 | **Vector Database** | **Actian VectorAI DB** | High-performance, purpose-built vector store communicating via gRPC. Sub-50ms cosine similarity search across 768-dim embeddings. |
 | **Object Detection** | **YOLO11-L** | State-of-the-art real-time object, person, and vehicle detection with sub-15ms inference latency. |
 | **Semantic Embedding** | **OpenAI CLIP ViT-L/14** | Multi-modal alignment model mapping video frames and text prompts into a shared 768-dimensional latent space. |
-| **Forensic Captioning** | **Gemini 2.5 Flash Vision** | Deep multimodal vision analysis generating detailed behavioral descriptions and timestamps. |
-| **Synthesis Reasoning**| **Gemini 2.5 Flash** | Synthesizes hundreds of clip detections into executive summaries, risk levels, and identified perpetrator/victim dynamics. |
+| **Forensic Captioning** | **Gemini 3.5 Flash Vision** | Deep multimodal vision analysis generating detailed behavioral descriptions and timestamps. |
+| **Synthesis Reasoning**| **Gemini 3.5 Flash** | Synthesizes hundreds of clip detections into executive summaries, risk levels, and identified perpetrator/victim dynamics. |
 | **Temporal Memory** | **Supermemory** | Cross-video persistent memory engine enabling natural language queries across weeks of historical camera data. |
 | **API Orchestrator** | **FastAPI (Python 3.11)** | High-performance asynchronous web framework providing Server-Sent Events (SSE) for two-phase streaming responses. |
 | **Structured Store** | **SQLite3** | Zero-latency local storage for fast timeline filtering, clip metadata, and event histories. |
