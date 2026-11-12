@@ -13,7 +13,7 @@ export default function LandingPage() {
             badgeCls: "bg-red-50 text-red-600 border-red-200",
             time: "00:14 – 00:26",
             cam: "CAM-01 · North Entrance",
-            synopsis: "Subject observed crawling low along perimeter floor towards service entrance. Gemini flagged evasive posture and erratic motion pattern.",
+            synopsis: "Subject observed crawling low along perimeter floor towards service entrance. Behavioral telemetry flagged evasive posture and erratic motion pattern.",
             intent: "unauthorized_entry",
             matchScore: 98.6
         },
@@ -33,7 +33,7 @@ export default function LandingPage() {
             badgeCls: "bg-amber-50 text-amber-700 border-amber-200",
             time: "02:40 – 02:48",
             cam: "CAM-02 · Emergency Bay",
-            synopsis: "Silver delivery van idling in designated red zone with hazard lights inactive. YOLO11 vehicle tracking logged 8-minute dwell.",
+            synopsis: "Silver delivery van idling in designated red zone with hazard lights inactive. Spatial dwell telemetry logged 8-minute stationary duration.",
             intent: "parking_violation",
             matchScore: 91.0
         }
@@ -85,7 +85,7 @@ export default function LandingPage() {
                     <div className="flex items-center gap-3">
                         <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-[11px] font-medium text-emerald-700">
                             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                            <span>Cloud T4 GPU Active</span>
+                            <span>Neural Core Online</span>
                         </div>
                         <button
                             onClick={() => navigate('/dashboard')}
@@ -123,7 +123,7 @@ export default function LandingPage() {
                         99% of surveillance cameras in airports, warehouses, retail centers, and enterprise campuses record passively to cold storage. Human teams only review footage <strong className="text-slate-800">after</strong> a breach has already happened.
                     </p>
                     <p className="text-xs sm:text-sm text-slate-500 max-w-2xl mx-auto leading-relaxed font-medium">
-                        Vigilant AI monitors every camera feed simultaneously with <strong className="text-blue-600">YOLO11</strong> high-speed tracklets, analyzes behavioral intent using <strong className="text-indigo-600">Gemini 2.5</strong>, and lets security operators interrogate hundreds of hours in plain English.
+                        Vigilant AI monitors every camera feed simultaneously with <strong className="text-blue-600">high-speed neural tracklets</strong>, analyzes behavioral intent using <strong className="text-indigo-600">cognitive visual reasoning</strong>, and lets security operators interrogate hundreds of hours of multi-camera footage in plain English.
                     </p>
 
                     {/* CTAs */}
@@ -204,7 +204,7 @@ export default function LandingPage() {
                         <div className="absolute bottom-4 right-4 bg-slate-900/85 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-white max-w-sm hidden sm:block shadow-xl">
                             <div className="flex items-center gap-2 mb-1.5">
                                 <Flaticon name="brain" type="sr" className="text-blue-400 text-xs" />
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">Gemini Multimodal Reasoning</span>
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">Cognitive Behavioral Reasoning</span>
                             </div>
                             <p className="text-xs text-slate-200 leading-relaxed font-sans">
                                 "Subject detected crouching behind restricted barrier at 00:14. Evasive velocity vector confirmed. Security dispatch alerted."
@@ -275,15 +275,15 @@ export default function LandingPage() {
                             <ul className="space-y-3 text-xs sm:text-sm text-slate-700">
                                 <li className="flex items-start gap-2.5">
                                     <span className="text-blue-600 font-bold shrink-0 mt-0.5">•</span>
-                                    <span><strong>Instant Threat Triage:</strong> YOLO11 extracts movement tracklets in milliseconds, escalating Stage C threats instantly.</span>
+                                    <span><strong>Instant Threat Triage:</strong> Sub-millisecond neural tracking extracts movement vectors, escalating high-priority threats instantly.</span>
                                 </li>
                                 <li className="flex items-start gap-2.5">
                                     <span className="text-blue-600 font-bold shrink-0 mt-0.5">•</span>
-                                    <span><strong>Natural Language Query:</strong> Search 100s of hours of footage in plain English like ChatGPT with instant timecodes.</span>
+                                    <span><strong>Natural Language Query:</strong> Search 100s of hours of footage in plain English like a conversational assistant with instant timecodes.</span>
                                 </li>
                                 <li className="flex items-start gap-2.5">
                                     <span className="text-blue-600 font-bold shrink-0 mt-0.5">•</span>
-                                    <span><strong>Multimodal Behavioral Reasoning:</strong> Gemini 2.5 Flash distinguishes benign actions from stealth, theft, or altercations.</span>
+                                    <span><strong>Multimodal Behavioral Reasoning:</strong> Deep visual intelligence distinguishes benign actions from stealth, theft, or altercations.</span>
                                 </li>
                                 <li className="flex items-start gap-2.5">
                                     <span className="text-blue-600 font-bold shrink-0 mt-0.5">•</span>
@@ -305,7 +305,7 @@ export default function LandingPage() {
                         Built for Modern High-Density Security.
                     </h2>
                     <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                        Combining high-throughput edge computer vision with deep reasoning multimodal foundation models.
+                        Combining high-throughput edge computer vision with deep cognitive visual intelligence.
                     </p>
                 </div>
 
@@ -320,7 +320,7 @@ export default function LandingPage() {
                                 Autonomous Anomaly Tracking
                             </h3>
                             <p className="text-xs text-slate-500 leading-relaxed mb-4">
-                                YOLO11 processes 50+ FPS directly on GPU, continuously tracking velocity vectors, spatial bounding boxes, and perimeter dwell times.
+                                Hardware-accelerated neural tracking engines process 50+ FPS directly on stream, continuously mapping velocity vectors, spatial bounding boxes, and perimeter dwell times.
                             </p>
                         </div>
                         <div className="bg-slate-50 rounded-xl p-3 border border-slate-200/60 text-[11px] font-mono text-slate-600 flex items-center justify-between">
@@ -339,12 +339,12 @@ export default function LandingPage() {
                                 Multimodal Behavioral Intent
                             </h3>
                             <p className="text-xs text-slate-500 leading-relaxed mb-4">
-                                Google Gemini 2.5 Flash analyzes behavioral nuance—differentiating between an employee tying their shoe versus a suspect crawling under a cash register.
+                                Cognitive vision models analyze behavioral nuance—differentiating between routine staff movements versus suspicious, evasive, or high-risk actions.
                             </p>
                         </div>
                         <div className="bg-slate-50 rounded-xl p-3 border border-slate-200/60 text-[11px] font-mono text-slate-600 flex items-center justify-between">
                             <span>Verification Logic:</span>
-                            <span className="text-indigo-600 font-bold">Dual-Model Union</span>
+                            <span className="text-indigo-600 font-bold">Multi-Stage Consensus</span>
                         </div>
                     </div>
 
@@ -358,7 +358,7 @@ export default function LandingPage() {
                                 Cross-Modal Natural Language Search
                             </h3>
                             <p className="text-xs text-slate-500 leading-relaxed mb-4">
-                                OpenAI CLIP ViT-L/14 maps frames and descriptive language into a unified 768-dimensional vector space for sub-second nearest-neighbor semantic search.
+                                High-dimensional semantic indexing maps visual keyframes and natural language into a unified vector space for sub-second search across distributed feeds.
                             </p>
                         </div>
                         <div className="bg-slate-50 rounded-xl p-3 border border-slate-200/60 text-[11px] font-mono text-slate-600 flex items-center justify-between">
@@ -463,26 +463,26 @@ export default function LandingPage() {
                     </div>
 
                     <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs space-y-2">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-600 uppercase">Layer 2 · GPU</span>
-                        <h4 className="text-sm font-bold text-slate-900">YOLO11 Tracklets</h4>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-600 uppercase">Layer 2 · Edge Neural</span>
+                        <h4 className="text-sm font-bold text-slate-900">Spatial Perception</h4>
                         <p className="text-xs text-slate-500 leading-relaxed">
-                            Extracts spatial bounding boxes, person counts, and velocity vectors at 50+ FPS real-time.
+                            Extracts spatial bounding boxes, entity counts, and velocity vectors at 50+ FPS real-time.
                         </p>
                     </div>
 
                     <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs space-y-2">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-600 uppercase">Layer 3 · Vector</span>
-                        <h4 className="text-sm font-bold text-slate-900">CLIP Embeddings</h4>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-600 uppercase">Layer 3 · Vector Index</span>
+                        <h4 className="text-sm font-bold text-slate-900">Semantic Embeddings</h4>
                         <p className="text-xs text-slate-500 leading-relaxed">
-                            Encodes keyframes into 768-D vectors stored for sub-50ms cosine similarity natural language search.
+                            Encodes keyframes into high-density vectors stored for sub-50ms cosine similarity natural language search.
                         </p>
                     </div>
 
                     <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs space-y-2">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 uppercase">Layer 4 · LLM</span>
-                        <h4 className="text-sm font-bold text-slate-900">Gemini 2.5 Intent</h4>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 uppercase">Layer 4 · Cognitive Core</span>
+                        <h4 className="text-sm font-bold text-slate-900">Behavioral Reasoning</h4>
                         <p className="text-xs text-slate-500 leading-relaxed">
-                            Synthesizes forensic narrative, verifies criminal intent, and assigns Stage A/B/C severity levels.
+                            Synthesizes forensic narrative, confirms suspicious intent, and categorizes high-priority threat levels.
                         </p>
                     </div>
                 </div>
@@ -530,10 +530,10 @@ export default function LandingPage() {
                     <div className="flex items-center gap-6 font-medium text-slate-600">
                         <button onClick={() => navigate('/dashboard')} className="hover:text-blue-600 cursor-pointer">Console</button>
                         <button onClick={() => navigate('/benchmarks')} className="hover:text-blue-600 cursor-pointer">Benchmarks</button>
-                        <span className="text-slate-400">Powered by Gemini 2.5 Flash & YOLO11</span>
                     </div>
                 </div>
             </footer>
         </div>
     )
 }
+

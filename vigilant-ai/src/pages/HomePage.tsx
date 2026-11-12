@@ -426,7 +426,7 @@ function DashboardView({ videos, loading, totalEvents, totalAlerts, totalTime, o
                             No surveillance footage ingested
                         </h3>
                         <p className="text-xs text-slate-500 max-w-md mx-auto mb-6 leading-relaxed">
-                            Upload CCTV, drone, or security camera footage to trigger <span className="text-blue-600 font-semibold">YOLOv8</span> motion tracking, <span className="text-slate-700 font-medium">Gemini multimodal forensic analysis</span>, and RAG search.
+                            Upload CCTV, drone, or security camera footage to trigger <span className="text-blue-600 font-semibold">autonomous neural</span> motion tracking, <span className="text-slate-700 font-medium">cognitive multimodal forensic analysis</span>, and semantic video search.
                         </p>
                         <button
                             onClick={onUpload}
@@ -729,7 +729,7 @@ function FeedsView({ videos, loading, onUpload, onSelectVideo }: {
                         No surveillance footage ingested
                     </h3>
                     <p className="text-xs text-slate-500 max-w-md mx-auto mb-6 leading-relaxed">
-                        Upload CCTV, drone, or security camera footage to trigger <span className="text-blue-600 font-semibold">YOLOv8</span> motion tracking, <span className="text-slate-700 font-medium">Gemini multimodal forensic analysis</span>, and RAG search.
+                        Upload CCTV, drone, or security camera footage to trigger <span className="text-blue-600 font-semibold">autonomous neural</span> motion tracking, <span className="text-slate-700 font-medium">cognitive multimodal forensic analysis</span>, and semantic video search.
                     </p>
                     <button
                         onClick={onUpload}
