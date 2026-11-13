@@ -308,6 +308,8 @@ npm run dev
 
 ## 🔮 Enterprise Roadmap & CCTV Scalability
 
+> **For an in-depth architectural and commercial deep dive, read [SCALABILITY.md](file:///c:/Users/princ/Documents/GitHub/Vigilant/SCALABILITY.md)**, which details the **5-Camera Cafe Case Study**, two-tier reflex/reasoning alert design, unit economics, edge fog computing, and Kafka/Camber GPU scaling.
+
 To transition Vigilant AI from a single-feed system to an **enterprise-wide Smart City / Multi-Facility Video Management System (VMS)**, the following architectural scaling path is established:
 
 1. **RTSP / ONVIF Live Stream Ingestion**
